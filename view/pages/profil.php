@@ -19,13 +19,10 @@ if(isset($_POST['mod']) && isset($_POST['mod']) == 'Modifier') {
     $login = htmlentities(trim($_POST['login']));
     $email = htmlentities(trim($_POST['email']));
     $pwd = password_hash(trim($_POST['password']), PASSWORD_ARGON2ID);
-    $confirmPwd = htmlentities(trim($_POST['confirm-password']));
 
     $req = $db->prepare("SELECT login FROM utilisateurs WHERE login = :login");
     $req->execute(array('login' => $login));
     $result = $req->fetchAll(PDO::FETCH_ASSOC);
-
-    var_dump($result);
 
     //var_dump($_SESSION['login']);
 

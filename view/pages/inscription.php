@@ -103,7 +103,6 @@ if(isset($_POST["in"]) && $_POST["in"] == "S'inscrire") {
     </form>
 <main>
 
-
 <footer>
     <?php require '../common/footer.php'; ?>
 </footer>

@@ -16,6 +16,20 @@
 
     <main>
         <h1>Page Accueil<h1>
+
+        <?php
+        $db = new PDO('mysql:host=localhost;dbname=blog','root', '');
+        $req = $db->prepare("SELECT * FROM articles ORDER BY date DESC LIMIT 3;");
+        $req->execute();
+        $articles = $req->fetchAll(PDO::FETCH_ASSOC);
+        ?>
+
+        <?php foreach($articles as $article) { ?>
+            <div class="articles">
+                <p><?= $article['article'] ?></p>
+            </div>
+        <?php } ?>
+
     </main>
 
     <footer>
