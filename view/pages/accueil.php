@@ -1,7 +1,23 @@
-<?php session_start(); ?>
+<?php
+
+// ----------------------------
+// PAGE ACCUEIL <<<<<<<<<<<<<<<
+// ----------------------------
+
+session_start();
+
+require '../common/config.php';
+
+// Récupere les données de l'article dans la base de données
+
+$req = $db->prepare("SELECT * FROM articles INNER JOIN categories ON articles.id_categorie = categories.id  ORDER BY date DESC LIMIT 3;");
+$req->execute();
+$articles = $req->fetchAll(PDO::FETCH_ASSOC);
+
+?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,18 +33,25 @@
     <main>
         <h1>Page Accueil<h1>
 
-        <?php
-        $db = new PDO('mysql:host=localhost;dbname=blog','root', '');
-        $req = $db->prepare("SELECT * FROM articles ORDER BY date DESC LIMIT 3;");
-        $req->execute();
-        $articles = $req->fetchAll(PDO::FETCH_ASSOC);
-        ?>
+        <section>
 
-        <?php foreach($articles as $article) { ?>
-            <div class="articles">
+        <?php foreach($articles as $article) : ?>
+
+            <article>
+
+                <p>Categorie - <?= $article['nom'] ?></p>
+
+                <h3><?= $article['titre'] ?></h3>
+
+                <img src="../../public/images<?=$article['image'] ?>" alt="<?= $article['nom_image'] ?>">
+
                 <p><?= $article['article'] ?></p>
-            </div>
-        <?php } ?>
+
+            </article>
+
+        <?php endforeach; ?>
+
+        </section>
 
     </main>
 
