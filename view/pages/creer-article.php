@@ -1,62 +1,138 @@
 <?php
+
+// ------------------------------------------
+// TRAITEMENT CREATION ARTICLE <<<<<<<<<<<<<<<
+// ------------------------------------------
+
 session_start();
 
-$msg['erreur'] = "";
-$msg['valid'] = "";
+require '../common/config.php'; 
 
-if ((isset($_POST['valider'])) && $_POST['valider'] == 'Valider') {
+$req = $db->prepare("SELECT * FROM categories");
+$req->execute();
+$categories = $req->fetchAll(PDO::FETCH_ASSOC);
 
-    if (!empty($_POST['article'])) {
+// Vérification si le formulaire a été envoyé
 
-        $article = $_POST['article'];
+if(isset($_POST["formsend"])) {
 
-        $db = new PDO('mysql:host=localhost;dbname=blog','root', '');
-        $req = $db->prepare("INSERT INTO articles(article,date) VALUES(:article,NOW())");
-        $req->execute(array(
-            'article' => $article,
-        ));
+    // Vérirfication si le contenu de l'article n'est pas vide
 
-        $msg['valid']= "Votre commentaire à bien été ajouté";
+    if(!empty($_POST['contenuArticle'])) {
 
-    } else {
-        $msg['erreur']= "Veuillez écrire un commentaire";
+        $titreArticle = htmlspecialchars($_POST['titreArticle']);
+        $categorieArticle = $_POST['categorieArticle'];
+        $article = htmlspecialchars($_POST['contenuArticle']);
+         
+        if (isset($_FILES['imageArticle']) && $_FILES['imageArticle']['error'] == 0) {
+
+            // Testons si le fichier n'est pas trop gros
+
+            if ($_FILES['imageArticle']['size'] <= 1000000) {
+
+                // Testons si l'extension est autorisée
+
+                $infosfichier = pathinfo($_FILES['imageArticle']['name']);
+                $extension_upload = $infosfichier['extension'];
+                $extensions_autorisees = array('jpg', 'jpeg', 'gif', 'png');
+
+                $imageArticle = $_FILES['imageArticle']['name'];
+                $nomImage = $infosfichier['filename'];
+
+                if (in_array($extension_upload, $extensions_autorisees)){
+
+                    // On peut valider le fichier et le stocker définitivement dans le dossier 'public/images'
+
+                    move_uploaded_file($_FILES['imageArticle']['tmp_name'], '../../public/images' .basename($imageArticle));
+
+                    // Insertion des données dans la table
+
+                    $insertArticle = $db->prepare("INSERT INTO articles (titre, article, image, nom_image, id_utilisateur, id_categorie, date) VALUES(:titre, :article, :image, :nom_image, :id_utilisateur, :id_categorie, NOW())");
+                    $insertArticle->execute(array(
+                        'titre' => $titreArticle,
+                        'article' => $article,
+                        'image' => $imageArticle,
+                        'nom_image' => $nomImage,
+                        'id_utilisateur' => $_SESSION['id'],
+                        'id_categorie' => $categorieArticle
+                    ));
+                    
+                } else {
+
+                    echo '<div class= "error_php">' . "L'extension de l'image n'est pas autorisé." . '</div>';
+                }
+                    //Si l'image est trop grande on affiche le message
+            } else {
+
+                echo '<div class= "error_php">' . "La taille de l'image est trop grande." . '</div>';
+            }
+
+        }else{
+                //Si aucun fichier n'a été envoyer on affiche le message
+                echo '<div class= "error_php">' . "Le téléchargement à échoué." . '</div>';
+        }
     }
 }
 
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<!--Création du formulaire ajout article-->
+
+<!doctype html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../../public/css/style.css" />
-    <title>Créer article</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ajouter un article</title>
+<link rel="stylesheet" href="../../public/css/style.css">
+<link rel="icon" href="favicon.ico" />
 </head>
 <body>
 
-<header>
-    <?php require '../common/header.php'; ?>
-</header>
+    <!--Import du header -->
 
-<main>
+    <header>
 
-    <form action="#" method="POST">
-        <label for="commentaire">Votre article : </label>
-        <textarea name="article"></textarea>
+    <?php include ('../common/header.php'); ?>
 
-        <input type="submit" class="btn" name="valider" value="Valider">
-        <br />
-        <p class='error'><?= $msg['erreur'] ?></P>
-        <p class='valid'><?= $msg['valid'] ?></P>
-    </form>
+    </header>
 
-</main>
+    <!-- Formulaire -->
 
-<footer>
-    <?php require '../common/footer.php'; ?>
-</footer>
+    <div class="user_login">
 
+        <form action="" method="POST" enctype="multipart/form-data">
+
+            <h1 class="login_text">Ajouter un article</h1>
+
+            <div class="form_container">
+                <input name="titreArticle" placeholder="Entrez un titre" required="required" autocomplete="off">
+            </div>
+
+            <div class="form_container">
+                <select name="categorieArticle">
+
+                    <?php foreach($categories as $categorie) :?>
+
+                        <option value="<?= $categorie['id'] ?>"><?= $categorie['nom'] ?></option>
+
+                    <?php endforeach; ?>
+
+                </select>
+            </div>
+
+            <div class="form_container">
+                <textarea name="contenuArticle" placeholder="Ecrivez votre article" required="required" autocomplete="off"></textarea>
+            </div>
+
+            <div>
+                <input type="file" name="imageArticle">
+            </div>
+
+            <div class="form_container">
+                <input type="submit" class="btn" name="formsend" value="Valider">
+            </div>
+
+        </form>
 </body>
 </html>
