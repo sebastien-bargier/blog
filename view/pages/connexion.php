@@ -1,83 +1,180 @@
 <?php
 
+// ------------------------------------------
+// TRAITEMENT DE LA CONNEXION <<<<<<<<<<<<<<<
+// ------------------------------------------
+
+// Démarrage de la session
+
 session_start();
 
-$msg['login'] = '';
-$msg['pwd'] = '';
+// Connexion à la base de donnée
 
-if(isset($_POST['co']) && $_POST['co'] == 'Se connecter') {
+require '../common/config.php'; 
 
-    $login = htmlentities(trim($_POST['login']));
+// Checker si l'utilisateur est déjà connecté ou pas
 
-    if(empty($login)) {
-        $msg['login'] = "Veuillez entrer votre login";
-    }
+if (isset($_SESSION['id'])) {
 
-    if(empty($_POST['password'])) {
-        $msg['pwd'] = "Vueillez entrer votre mot de passe";
-    }
+    // On redirige vers l'accueil
 
-    if(!empty($login) && !empty($_POST['password'])) {
+    header('Location:accueil.php');
 
-        $db = new PDO('mysql:host=localhost;dbname=blog','root', '');
-        $req = $db->prepare("SELECT * FROM utilisateurs WHERE login = :login");
-        $req->execute(array('login' => $login));
-        $user = $req->fetchAll(PDO::FETCH_ASSOC);
-        
-        if(count($user)) {
-            if(password_verify($_POST['password'], $user[0]['password'])){
-
-                $_SESSION['login'] = $user[0]['login'];
-                $_SESSION['id'] = $user[0]['id'];
-                
-                header('Location: accueil.php');
-                
-            } else {
-                $msg['pwd']= "Le mot de passe est incorrect.";
-            }
-
-        } else {
-            $msg['login'] = "Le login est inconnu";
-        }
-    }
 }
+
 ?>
-<!DOCTYPE html>
-<html lang="en">
+
+<!--Création du formulaire de connexion-->
+
+
+<!doctype html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../../public/css/style.css" />
-    <title>Connexion</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion</title>
+<link rel="stylesheet" href="../../public/css/style.css">
+<link rel="icon" href="favicon.ico" />
 </head>
 <body>
 
+<!--Import du header -->
+
 <header>
-    <?php require '../common/header.php'; ?>
+
+<?php include ('../common/header.php'); ?>
+
 </header>
 
-<main>
-    <form action='' method='post'>
+<!-- Formulaire -->
+
+<div class="user_login">
+    
+    <form class="login_form" action="" method="POST">
         
-        <h1>Connexion</h1>
+        <h1 class="login_text">Connexion</h1>
 
-        <br />
+        <div class="form_container">
+        <input type="text" class="form_input" name="login" placeholder="Nom d'utilisateur" required="required" autocomplete="off">
+        </div>
+        
+        <div class="form_container">
+        <input type="password" class="form_input" name="password" placeholder="Mot de passe" required="required" autocomplete="off">
+        </div>
+        
+        <div class="form_container">
+        <input type="submit" class="btn" name="formsend" value="Se connecter">
+        </div>    
 
-        <label for="login">Login</label>
-        <input type="text" name="login" value="<?php if(isset($_POST['co'])) {echo $login;} ?>">
-        <p class="error"><?= $msg['login'] ?></p>
+        <p>Vous n'avez pas de compte?</p>
+        <p class="login_register_text"><a href="inscription.php"> Inscrivez-vous ici.</a></p>
+    
+    </form>   
 
-        <label for="password">Password</label>
-        <input type="password" name="password">
-        <p class="error"><?= $msg['pwd'] ?></p>
+</div>
 
-        <input type="submit" class="btn" name="co" value="Se connecter"></input>
-    </form>
-<main>
+<?php
 
+// Vérification si le formulaire a été envoyé
+
+if(isset($_POST) AND !empty($_POST) ) {
+  
+  // Vérification si les champs existent et si ils sont bien remplis
+
+  if (!empty($_POST['login']) && !empty($_POST['password'])){
+
+    // Empêcher les failles XSS
+
+    $login=htmlspecialchars($_POST['login']);
+    $password=htmlspecialchars($_POST['password']);
+
+    // Checker si le compte est présent dans la table
+
+    $check = $db->prepare('SELECT id, login, email, password, id_droits FROM utilisateurs WHERE login = ?');
+    $check->execute(array($login));
+    $data = $check->fetch();
+    $row = $check->rowCount();
+
+    // Si le compte existe
+
+    if ($row > 0) {
+
+      // Si le mot de passe est correct
+
+      if (password_verify($password, $data['password'])) {
+
+        // S'il s'agit du compte Administrateur
+        
+        if ($data['login'] == 'admin') {
+
+          // Création de la session Administrateur puis redirection vers admin.php
+
+          $_SESSION['id'] = $data['id'];
+
+          header('Location:admin.php?id=' . $_SESSION['id']);
+          // echo 'Bonjour' . ' ' . $data['prenom'];
+
+        }
+        
+        // S'il s'agit d'un compte Membre classique
+
+        else {
+
+          // Création de la session Membre puis redirection vers profil.php
+        
+          $_SESSION['id'] = $data['id'];
+          $_SESSION['login'] = $data['login'];
+          $_SESSION['email'] = $data['email'];
+          $_SESSION['password'] = $data['password'];
+          $_SESSION['id_droits'] = $data['id_droits'];
+            
+          header('Location:accueil.php?id=' . $_SESSION['id']);
+          // DEBUG => echo 'Bonjour' . ' ' . $data['prenom'];
+
+
+          }
+          
+      }
+      
+      else { 
+          
+        // Si le mot de passe ne correspond pas
+
+        echo '<div class= "error_php">' . "Mot de passe incorrect." . '</div>';
+      
+      }
+
+    }
+      
+    else { 
+        
+      // Si le compte est inexistant dans la table
+
+      echo '<div class= "error_php">' . "Le compte n'existe pas." . '</div>';
+          
+    }
+  }
+
+  else { 
+
+      // Retour sur connexion.php si le formulaire est vide
+      
+      header('Location: connexion.php'); 
+      
+      die();
+
+    } 
+
+}
+
+?>
+
+<!--Import du footer -->
+ 
 <footer>
-    <?php require '../common/footer.php'; ?>
+
+<?php include ('../common/footer.php'); ?>
+
 </footer>
 
 </body>

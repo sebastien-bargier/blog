@@ -1,111 +1,183 @@
 <?php
-session_start();
 
-$msg['login'] = '';
-$msg['email'] = '';
-$msg['pwd'] = '';
-$msg['c-pwd'] = '';
+// -------------------------------------------
+// TRAITEMENT DE L'INSCRIPTION <<<<<<<<<<<<<<<
+// -------------------------------------------
 
-if(isset($_POST["in"]) && $_POST["in"] == "S'inscrire") {
+// Connexion à la base de donnée
 
-    $login = htmlentities(trim($_POST['login']));
-    $email = htmlentities(trim($_POST['email']));
-    $pwd = password_hash(trim($_POST['password']), PASSWORD_ARGON2ID);
+require '../common/config.php';
 
-    $db = new PDO('mysql:host=localhost;dbname=blog','root', '');
-    $requete = $db->prepare("SELECT * FROM utilisateurs WHERE login = :login");
-    $requete->execute(array('login' => $login));
-    //$result = $req->fetch(PDO::FETCH_ASSOC);
-    $rowLogin = $requete->rowCount();
-   
-    if($rowLogin != 0) {
-        $msg['login'] = "Ce login existe déjà";
+// Checker si l'utilisateur est déjà connecté ou pas
 
-    } else if(!empty($_POST['login']) && !empty($_POST['email']) &&
-    !empty($_POST['password']) && !empty($_POST['confirm-password'])) {
+if (isset($_SESSION['id'])) {
 
-        if ($_POST["password"] == $_POST["confirm-password"]) {
-            
-            $req = $db->prepare("INSERT INTO utilisateurs(login,email,password) VALUES(:login,:email,:password)");
-            $req->execute(array(
-                'login' => $login,
-                'email' => $email,
-                'password' => $pwd
-            ));
-        
-            header('Location: connexion.php');
-        } else {
-            $msg['pwd'] = "Les mots de passe ne correspondent pas!";
-        }
+    // On redirige vers l'accueil
 
-    } else {
-        
-        if(empty($_POST['login'])) {
-            $msg['login'] = "Veuillez entrer un login.";
-        }
-    
-        if(empty($_POST['email'])) {
-            $msg['email'] = "Veuillez entrer un prenom.";
-        }
-    
-        if(empty($_POST['password'])) {
-            $msg['pwd'] = "Veuillez entrer un mot de passe.";
-        }
-    
-        if(empty($_POST['confirm-password'])) {
-            $msg['c-pwd'] = "Veuillez entrer la confirmation du mot de passe.";
-        }
-    }
+    header('Location:accueil.php');
+
 }
 
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<!--Création du formulaire d'inscription-->
+
+
+<!doctype html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../../public/css/style.css" />
-    <title>Inscription</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscription</title>
+<link rel="stylesheet" href="../../public/css/style.css">
+<link rel="icon" href="favicon.ico" />
 </head>
 <body>
 
+<!--Import du header -->
+
 <header>
-    <?php require '../common/header.php'; ?>
+
+<?php include ('../common/header.php'); ?>
+
 </header>
 
-<main>
-    <form action="" method="POST">
+<!-- Formulaire -->
+
+<div class="user_register">
+    
+    <form class="register_form" action="" method="POST">
         
-        <h1>Inscription</h1>
-
-        <br />
-
-        <label for="login">Login :</label>
-        <input type="text" name="login" value="<?php if(isset($_POST['in'])) {echo $login;} ?>">
-        <p class="error"><?= $msg['login'] ?></p>
-
-
-        <label for="email">Email :</label>
-        <input type="email" name="email"  value="<?php if(isset($_POST['in'])) {echo $email;} ?>">
-        <p class="error"><?= $msg['email'] ?></p>
-
-        <label for="password">Password :</label>
-        <input type="password" name="password">
-        <p class="error"><?= $msg['pwd'] ?></p>
-
-        <label for="confirm-password">Confirm password :</label>
-        <input type="password" name="confirm-password">
-        <p class="error"><?= $msg['c-pwd'] ?></p>
-
-        <input type="submit" class="btn" name="in" value="S'inscrire"></input>
+        <h1 class="register_text">Inscription</h1>
+      
+        <div class="form_container">
+        <input type="text" class="form_input" name="login" id="login" placeholder="Nom d'utilisateur" required="required" autocomplete="off">
+        </div>
+        
+        <div class="form_container">
+        <input type="text" class="form_input" name="email" id="email" placeholder="Adresse e-mail" required="required" autocomplete="off">
+        </div>
+        
+        <div class="form_container">
+        <input type="password" class="form_input" name="password" id="password" placeholder="Nouveau mot de passe" required="required" autocomplete="off">
+        </div>
+        
+        <div class="form_container">
+        <input type="password" class="form_input" name="cpassword" id="cpassword" placeholder="Retapez le mot de passe" required="required" autocomplete="off">
+        </div>
+        
+        <div class="form_container">
+        <input type="submit" class="btn" name="formsend" id="formsend" value="S'inscrire">
+        </div>  
+        
+        <p>Vous avez déjà un compte?</p>
+        <p class="login_register_text"><a href="connexion.php"> Connectez-vous ici.</a></p>
+    
     </form>
-<main>
+
+</div>
+
+<?php
+
+// Vérification si le formulaire a été envoyé
+
+if(isset($_POST) AND !empty($_POST) ) {
+
+  // Empêcher les failles XSS
+
+  $login = htmlspecialchars($_POST['login']);
+  $email = htmlspecialchars($_POST['email']);
+
+  // Checker si le nom d'utilisateur existe
+
+  $check_user = $db->prepare('SELECT login, email, password, id_droits FROM utilisateurs WHERE login = ?');
+  $check_user->execute(array($login));
+  $data_user = $check_user->fetch();
+  $row_user = $check_user->rowCount();
+
+  // Si le nom d'utilisateur n'existe pas
+
+  if ($row_user == 0) {
+
+    // Checker si l'email existe
+
+    $check_email = $db->prepare('SELECT login, email, password, id_droits FROM utilisateurs WHERE email = ?');
+    $check_email->execute(array($email));
+    $data_email = $check_email->fetch();
+    $row_email = $check_email->rowCount();
+
+    // Si l'email n'existe pas
+
+    if ($row_email == 0) {
+
+        $password = htmlspecialchars($_POST['password']);
+        $cpassword = htmlspecialchars($_POST['cpassword']);
+
+        // Si les deux mots de passe sont identiques
+    
+        if ($password == $cpassword) {
+
+        // Hashage du mot de passe
+
+        $cost= ['cost' => 12];
+        $password = password_hash($password, PASSWORD_BCRYPT, $cost);
+
+        // Insertion des données entrées par l'utilisateur dans la table
+
+        $insert = $db->prepare ('INSERT INTO utilisateurs(login, email, password, id_droits) VALUES (:login, :email, :password, 1)');
+        $insert->execute(array('login' => $login, 'email' => $email, 'password' => $password));
+
+        // Si inscription réussie
+
+        $_SESSION['id'] = $data['id'];
+
+        // echo '<div class= "success_php">' ."L'inscription a été effectué avec succès." . '</br>' . "Vous pouvez vous connecter " . '<a style= "color: #337BD4" href="connexion.php">' . "ici" . '</a>' . '</div>';
+        header('Location:connexion.php' . $_SESSION['id']);
+        
+
+        }
+
+        else {
+
+        // Si les mots de passes ne correspondent pas
+
+        echo '<div class= "error2_php">' ."Les mots de passe ne sont pas identiques." . '</div>';
+
+        }
+
+    }
+
+    else {
+
+        // Si le login entré par l'utilisateur existe déjà dans la base de donnée
+        
+        echo '<div class= "error2_php">' ."L'e-mail est déjà utilisé." . '</div>';
+
+    }
+  }
+
+    else {
+
+        // Si le login entré par l'utilisateur existe déjà dans la base de donnée
+        
+        echo '<div class= "error2_php">' ."Le nom d'utilisateur est déjà utilisé." . '</div>';
+
+    }
+
+    }
+
+
+
+?>
+
+<!--Import du footer -->
 
 <footer>
-    <?php require '../common/footer.php'; ?>
+
+<?php include ('../common/footer.php'); ?>
+
 </footer>
+
 
 </body>
 </html>
