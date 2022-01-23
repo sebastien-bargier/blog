@@ -16,13 +16,14 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
 
 }
 
-// Récupere l'article selon l'id
+// Récupère l'article selon son id passé dans l'url
 
-$requete = $db->prepare("SELECT * FROM articles WHERE id = :getid");
+$requete = $db->prepare("SELECT * FROM articles a INNER JOIN categories c ON a.id_categorie = c.id WHERE a.id = :getid");
 $requete->execute(array('getid' => $getid));
-$article = $requete->fetchAll(PDO::FETCH_ASSOC);
+$article = $requete->fetchAll(PDO::FETCH_ASSOC); 
 
-// Récupere les commentaires utilisateur
+
+// Récup7re les commentaires utilisateur lié a l'article
 
 $requete = $db->prepare("SELECT * FROM commentaires c INNER JOIN utilisateurs u ON c.id_utilisateur = u.id WHERE id_article = :getid");
 $requete->execute(array('getid' => $getid));
