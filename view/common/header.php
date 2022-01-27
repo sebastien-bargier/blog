@@ -14,7 +14,7 @@
       <li><a href="inscription.php">Inscription</a></li>
       <li><a href="connexion.php">Connexion</a></li>
 
-    <?php endif ?>
+    <?php endif; ?>
 
     <li class="deroulant"><a href="articles.php">Articles</a>
       <ul class="sous">

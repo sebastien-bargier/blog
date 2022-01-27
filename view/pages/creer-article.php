@@ -43,7 +43,7 @@ if(isset($_POST["formsend"])) {
 
                     // On peut valider le fichier et le stocker définitivement dans le dossier 'public/images'
 
-                    move_uploaded_file($_FILES['imageArticle']['tmp_name'], '../../public/images' .basename($imageArticle));
+                    move_uploaded_file($_FILES['imageArticle']['tmp_name'], '../../public/images/' .basename($imageArticle));
 
                     // Insertion des données dans la table
 
@@ -134,5 +134,13 @@ if(isset($_POST["formsend"])) {
             </div>
 
         </form>
+    <!--Import du footer -->
+    
+    <footer>
+
+    <?php include ('../common/footer.php'); ?>
+
+    </footer>
+
 </body>
 </html>

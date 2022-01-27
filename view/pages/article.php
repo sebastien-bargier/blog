@@ -23,7 +23,7 @@ $requete->execute(array('getid' => $getid));
 $article = $requete->fetchAll(PDO::FETCH_ASSOC); 
 
 
-// Récup7re les commentaires utilisateur lié a l'article
+// Récupère les commentaires utilisateur lié a l'article
 
 $requete = $db->prepare("SELECT * FROM commentaires c INNER JOIN utilisateurs u ON c.id_utilisateur = u.id WHERE id_article = :getid");
 $requete->execute(array('getid' => $getid));
@@ -89,7 +89,7 @@ if(isset($_POST) && !empty($_POST)) {
 
             <h3><?= $key['titre'] ?></h3>
 
-            <img src="../../public/images<?=$key['image'] ?>" alt="<?= $key['nom_image'] ?>">
+            <img src="../../public/images/<?=$key['image'] ?>" alt="<?= $key['nom_image'] ?>">
 
             <p><?= $key['article'] ?></p>
 
