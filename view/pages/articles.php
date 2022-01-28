@@ -20,15 +20,15 @@ if(isset($_GET['start']) && !empty($_GET['start'])) {
 // On détermine dans quelle catégorie on se trouve
 if (isset($_GET['categorie']) && !empty($_GET['categorie'])) {
 
-    $categorie_chiffre = 'WHERE id_categorie = '.strip_tags($_GET['categorie']);
+    $categorie = 'WHERE id_categorie = '.strip_tags($_GET['categorie']);
 }
 else {
-    $categorie_chiffre = '';
+    $categorie = '';
 }
 
 
 // On détermine le nombre total d'articles
-$requete = $db->prepare('SELECT  COUNT(*) AS nb_articles FROM `articles` '.$categorie_chiffre.'');
+$requete = $db->prepare('SELECT  COUNT(*) AS nb_articles FROM `articles` '.$categorie.'');
 
 // On exécute
 $requete->execute();
@@ -39,7 +39,7 @@ $result = $requete->fetch();
 $nbArticles = (int) $result['nb_articles'];
 
 // On détermine le nombre d'articles par page
-$parPage = 5;
+$parPage = 2;
 
 // On calcule le nombre de pages total
 $pages = ceil($nbArticles / $parPage);
@@ -47,13 +47,14 @@ $pages = ceil($nbArticles / $parPage);
 // Calcul du 1er article de la page
 $premier = ($currentPage * $parPage) - $parPage;
 
-$requete = $db->prepare('SELECT * FROM `articles` '.$categorie_chiffre.' ORDER BY `id` DESC LIMIT '.$premier.', '.$parPage.'');
+// On récupère les données de tous les articles
+$requete = $db->prepare('SELECT * FROM categories INNER JOIN articles ON articles.id_categorie = categories.id '.$categorie.' ORDER BY date DESC LIMIT '.$premier.', '.$parPage.'');
 $requete->execute();
 $articles = $requete->fetchAll();
 
 // REQUETE CHOIX CATEGORIE 
-$filtreCat = $db->prepare("SELECT * FROM categories");
-$filtreCat->execute(array());
+$filtreCategorie = $db->prepare("SELECT * FROM categories");
+$filtreCategorie->execute(array());
 
 ?>
 
@@ -90,9 +91,9 @@ $filtreCat->execute(array());
 
                     <?php
                     
-                    while($valCat = $filtreCat->fetch(PDO::FETCH_ASSOC)) {
+                    while($valCategorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) {
                                                     
-                        echo "<option value=" . $valCat["id"] . ">" . $valCat["nom"] . "</option>";
+                        echo "<option value=" . $valCategorie["id"] . ">" . $valCategorie["nom"] . "</option>";
                                                     
                     }
 
@@ -114,6 +115,8 @@ $filtreCat->execute(array());
                 <article>
 
                     <a href="../pages/article.php?id=<?= $article['id'] ?>">
+
+                        <p>Categorie - <?= $article['nom'] ?></p>
 
                         <h3><?= $article['titre'] ?></h3>
 
@@ -146,21 +149,8 @@ $filtreCat->execute(array());
                 } 
                 
                 for($page = 1; $page <= $pages; $page++) {
-                    
-                    
-                    if($page == $currentPage) {
-
-                        echo $page.' ';
-                    } else {
-
-                        echo '<a href="articles.php?';
-                        
-                        if (isset($_GET['categorie'])) {
-                            echo 'categorie='.$_GET['categorie'].'&';
-                        }  
-
-                        echo 'start='.$page.'">'.$page.'</a> ';
-                    }
+                       
+                    echo'<a href="articles.php?start='.$page.'">'.$page.'</a>';       
                 }
 
                 if ($currentPage < $pages) {
