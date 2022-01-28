@@ -39,7 +39,7 @@ $result = $requete->fetch();
 $nbArticles = (int) $result['nb_articles'];
 
 // On détermine le nombre d'articles par page
-$parPage = 2;
+$parPage = 5;
 
 // On calcule le nombre de pages total
 $pages = ceil($nbArticles / $parPage);
