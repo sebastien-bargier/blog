@@ -79,13 +79,13 @@ if(isset($_POST) && !empty($_POST)) {
 
     <main>
         
-        <section>
+        <section class="page_article">
 
         <?php foreach($article as $key) : ?>
 
-            <article>
+            <article class="article">
 
-            <p><?= $key['nom'] ?></p>
+            <p>Categorie - <?= $key['nom'] ?></p>
 
             <h3><?= $key['titre'] ?></h3>
 
@@ -96,19 +96,21 @@ if(isset($_POST) && !empty($_POST)) {
             </article>
         <?php endforeach; ?>
 
-            <h2>Commentaires</h2>
+
+            <h3>Commentaires :</h3>
 
             <?php foreach($commentaire as $key) : ?>
 
-            <div>
+            <div class="commentaire">
                 <p><?= $key['commentaire'] ?></p>
             </div>
 
             <?php endforeach; ?>
 
-            <form action="" method="POST">
-                
-                <textarea name="commentaire" placeholder="Ecrivez votre commentaire..."></textarea>
+            
+            <form class="form_commentaire" action="" method="POST">
+
+                <input class="input_commentaire" type="text" name="commentaire" placeholder="Ecrivez votre commentaire..."/>
 
                 <input type="submit" value="Valider" name="formsend">
 

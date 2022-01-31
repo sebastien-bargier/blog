@@ -78,96 +78,94 @@ $filtreCategorie->execute(array());
 
     <main>
 
-        <section>
+        <!-- Categories -->
+        <section class="categories">
 
-            <!-- Continents -->
-            <section class="categories">
+        <form class="categorie_form" action="" method="GET">
 
-            <form class="categorie_form" action="" method="GET">
+            <select name="categorie">
 
-                <select name="categorie">
-
-                    <option value="0">Toutes les catégories</option>
-
-                    <?php
-                    
-                    while($valCategorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) {
-                                                    
-                        echo "<option value=" . $valCategorie["id"] . ">" . $valCategorie["nom"] . "</option>";
-                                                    
-                    }
-
-                    ?>
-
-                    <input type="submit" class="categorie_btn" name="formsend" value="OK">
-
-                </select>
-
-            </form>
-
-            </section>
-
-            <!-- Articles -->
-            <section class="les_articles">
-    
-            <?php foreach($articles as $article) : ?>
-
-                <article>
-
-                    <a href="../pages/article.php?id=<?= $article['id'] ?>">
-
-                        <p>Categorie - <?= $article['nom'] ?></p>
-
-                        <h3><?= $article['titre'] ?></h3>
-
-                        <img src="../../public/images/<?=$article['image'] ?>" alt="<?= $article['nom_image'] ?>">
-
-                        <p><?= $article['article'] ?></p>
-
-                        <p>Date de publication : <?= date("d-m-Y à H:i", strtotime($article['date'])) ?></p>
-
-                    </a>
-                </article>
-            <?php endforeach; ?>
-
-            </section>
-
-            <!-- Pagination -->
-            <section class="pagination">
+                <option value="0">Toutes les catégories</option>
 
                 <?php
-
-                if ($currentPage != 1) {
-
-                    echo '<a href="articles.php?';
-                    
-                    if (isset($_GET['categorie'])) {
-                        echo 'categorie='.$_GET['categorie'].'&';
-                    } 
-
-                    echo 'start='.($currentPage-1).'">Précédant</a>'; 
-                } 
                 
-                for($page = 1; $page <= $pages; $page++) {
-                       
-                    echo'<a href="articles.php?start='.$page.'">'.$page.'</a>';       
-                }
-
-                if ($currentPage < $pages) {
-
-                    echo '<a href="articles.php?';
-                    
-                    if (isset($_GET['categorie'])) {
-
-                        echo 'categorie='.$_GET['categorie'].'&';
-                    }   
-                    
-                    echo 'start='.($currentPage+1).'">Suivant</a>';
+                while($valCategorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) {
+                                                
+                    echo "<option value=" . $valCategorie["id"] . ">" . $valCategorie["nom"] . "</option>";
+                                                
                 }
 
                 ?>
-            </section>
+
+                <input type="submit" class="categorie_btn" name="formsend" value="OK">
+
+            </select>
+
+        </form>
+
         </section>
+
+        <!-- Articles -->
+        <section class="les_articles">
+
+        <?php foreach($articles as $article) : ?>
+
+            <article>
+
+                <a href="../pages/article.php?id=<?= $article['id'] ?>">
+
+                    <p>Categorie - <?= $article['nom'] ?></p>
+
+                    <h3><?= $article['titre'] ?></h3>
+
+                    <img src="../../public/images/<?=$article['image'] ?>" alt="<?= $article['nom_image'] ?>">
+
+                    <p><?= $article['article'] ?></p>
+
+                    <p>Date de publication : <?= date("d-m-Y à H:i", strtotime($article['date'])) ?></p>
+
+                </a>
+            </article>
+        <?php endforeach; ?>
+
+        </section>
+
+        <!-- Pagination -->
+        <section class="pagination">
+
+            <?php
+
+            if ($currentPage != 1) {
+
+                echo '<a href="articles.php?';
+                
+                if (isset($_GET['categorie'])) {
+                    echo 'categorie='.$_GET['categorie'].'&';
+                } 
+
+                echo 'start='.($currentPage-1).'">Précédent</a>'; 
+            } 
+            
+            for($page = 1; $page <= $pages; $page++) {
+                    
+                echo'<a href="articles.php?start='.$page.'">'.$page.'</a>';       
+            }
+
+            if ($currentPage < $pages) {
+
+                echo '<a href="articles.php?';
+                
+                if (isset($_GET['categorie'])) {
+
+                    echo 'categorie='.$_GET['categorie'].'&';
+                }   
+                
+                echo 'start='.($currentPage+1).'">Suivant</a>';
+            }
+
+            ?>
+        </section>
+
     </main>
 
 </body>
