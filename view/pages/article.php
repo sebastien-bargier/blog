@@ -31,50 +31,52 @@ $commentaire = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 
 // Vérification si le formulaire a été envoyé
+if (isset($_SESSION['id'])) {
 
-if(isset($_POST) && !empty($_POST)) {
+    if(isset($_POST) && !empty($_POST)) {
 
-    // Vérification champ commentaire
+        // Vérification champ commentaire
 
-    if(!empty($_POST['commentaire'])) {
+        if(!empty($_POST['commentaire'])) {
 
-        $commentaire = htmlspecialchars($_POST['commentaire']);
+            $commentaire = htmlspecialchars($_POST['commentaire']);
 
-        // Insertion du commentaire en base de données
+            // Insertion du commentaire en base de données
 
-        $insertCom = $db->prepare('INSERT INTO commentaires(commentaire, id_article, id_utilisateur, date) VALUES(:commentaire, :id_article, :id_utilisateur, NOW())');
-        $insertCom->execute(array(
-            'commentaire' => $commentaire,
-            'id_article' => $getid,
-            'id_utilisateur' => $_SESSION['id']
-        ));
+            $insertCom = $db->prepare('INSERT INTO commentaires(commentaire, id_article, id_utilisateur, date) VALUES(:commentaire, :id_article, :id_utilisateur, NOW())');
+            $insertCom->execute(array(
+                'commentaire' => $commentaire,
+                'id_article' => $getid,
+                'id_utilisateur' => $_SESSION['id']
+            ));
+            header("Refresh:0");
 
-
-    } else {
-        echo "Veuillez entrer un commentaire";
+        } else {
+            echo "Veuillez entrer un commentaire";
+        }
     }
+} else {
+
+    echo '<div class= "error2_php">' ."Veuillez vous connecter pour laisser un ncommentaire." . '</div>';
 }
 
 
 ?>
 
-<!doctype html>
-<html lang="fr">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Article</title>
-<link rel="stylesheet" href="../../public/css/style.css">
-<link rel="icon" href="favicon.ico" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../public/css/style.css">
+    <title>Document</title>
 </head>
 <body>
 
-    <!--Import du header -->
-
+        <!--Import du header -->
     <header>
-
-    <?php include ('../common/header.php'); ?>
-
+        <?php include '../common/header.php'; ?>
     </header>
 
     <main>
@@ -122,5 +124,6 @@ if(isset($_POST) && !empty($_POST)) {
         <?php require '../common/footer.php'; ?>
     </footer>
     
+  
 </body>
 </html>
