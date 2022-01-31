@@ -1,3 +1,10 @@
+<?php
+
+$categorie = $db->prepare("SELECT * FROM categories");
+$categorie->execute(array());
+
+?>
+
 <nav>
   
   <a class="logo" href="accueil.php">eBLOG</a>
@@ -18,10 +25,11 @@
 
     <li class="deroulant"><a href="articles.php">Articles</a>
       <ul class="sous">
-        
-        <li><a href="">Categorie 1</a></li>
-        <li><a href="">Categorie 2</a></li>
-        <li><a href="">Categorie 3</a></li>
+
+        <?php while($cat = $categorie->fetch(PDO::FETCH_ASSOC)) :?>
+
+          <li><a href="../pages/articles.php?categorie=<?= $cat['id'] ?>"><?= $cat['nom'] ?></a></li>
+        <?php endwhile; ?>
 
       </ul>
     </li>
