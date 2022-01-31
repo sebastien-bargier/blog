@@ -79,7 +79,7 @@ $filtreCategorie->execute(array());
         <!-- Categories -->
         <section class="categories">
 
-                <a href="../pages/articles.php?categorie=0"><p>Toutes les catégories</p>
+                <a href="../pages/articles.php"><p>Toutes les catégories</p>
 
                 <?php
                 
