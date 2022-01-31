@@ -4,9 +4,13 @@
 // AFFICHAGE ARTICLE, TRAITEMENT COMMENTAIRES <<<<<<<<<<<<<<<
 // ----------------------------------------------------------
 
+
 session_start();
 
 require '../common/config.php'; 
+
+// Initalisation variable vide message erreur commentaire
+$msg['commentaire'] = "";
 
 // DETERMINE SUR QUELLE PAGE ON SE TROUVE
 
@@ -31,11 +35,12 @@ $commentaire = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 
 // Vérification si le formulaire a été envoyé
-if (isset($_SESSION['id'])) {
 
-    if(isset($_POST) && !empty($_POST)) {
+if(isset($_POST) && !empty($_POST)) {
 
-        // Vérification champ commentaire
+    // Verification si un utilisateur est connecté
+    if(isset($_SESSION['id'])) {
+    // Vérification champ commentaire
 
         if(!empty($_POST['commentaire'])) {
 
@@ -50,31 +55,32 @@ if (isset($_SESSION['id'])) {
                 'id_utilisateur' => $_SESSION['id']
             ));
             header("Refresh:0");
-
-        } else {
-            echo "Veuillez entrer un commentaire";
         }
-    }
-} else {
 
-    echo '<div class= "error2_php">' ."Veuillez vous connecter pour laisser un ncommentaire." . '</div>';
+    } else {
+
+        // si utilisateur non connecté on laisse un message d'erreur
+        $msg['commentaire'] = '<a href="connexion.php">Connectez-vous ici pour laisser un commentaire.</a>';
+    }
 }
+
 
 
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../public/css/style.css">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../public/css/style.css">
+<title>Article</title>
 </head>
 <body>
 
-        <!--Import du header -->
+    <!--Import du header -->
+
     <header>
         <?php include '../common/header.php'; ?>
     </header>
@@ -83,39 +89,38 @@ if (isset($_SESSION['id'])) {
         
         <section class="page_article">
 
-        <?php foreach($article as $key) : ?>
-
             <article class="article">
 
-            <p>Categorie - <?= $key['nom'] ?></p>
+                <?php foreach($article as $key) : ?>
 
-            <h3><?= $key['titre'] ?></h3>
+                    <p>Categorie - <?= $key['nom'] ?></p>
 
-            <img src="../../public/images/<?=$key['image'] ?>" alt="<?= $key['nom_image'] ?>">
+                    <h3><?= $key['titre'] ?></h3>
 
-            <p><?= $key['article'] ?></p>
+                    <img src="../../public/images/<?=$key['image'] ?>" alt="<?= $key['nom_image'] ?>">
+
+                    <p><?= $key['article'] ?></p>
+
+                <?php endforeach; ?>
 
             </article>
-        <?php endforeach; ?>
 
-
-            <h3>Commentaires :</h3>
+            <h2>Commentaires :</h2>
 
             <?php foreach($commentaire as $key) : ?>
 
-            <div class="commentaire">
-                <p><?= $key['commentaire'] ?></p>
-            </div>
+                <div class="commentaire">
+                    <p><?= $key['commentaire'] ?></p>
+                </div>
 
             <?php endforeach; ?>
 
-            
             <form class="form_commentaire" action="" method="POST">
 
-                <input class="input_commentaire" type="text" name="commentaire" placeholder="Ecrivez votre commentaire..."/>
+                <input class="input_commentaire" type="text" name="commentaire" placeholder="Ecrivez votre commentaire..."  required="required" />
+                <p><?= $msg['commentaire'] ?></p>
 
                 <input type="submit" value="Valider" name="formsend">
-
             </form>
         </section>
     </main>
@@ -124,6 +129,5 @@ if (isset($_SESSION['id'])) {
         <?php require '../common/footer.php'; ?>
     </footer>
     
-  
 </body>
 </html>

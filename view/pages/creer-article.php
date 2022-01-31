@@ -8,6 +8,8 @@ session_start();
 
 require '../common/config.php'; 
 
+$msg['error_file'] = "";
+
 $req = $db->prepare("SELECT * FROM categories");
 $req->execute();
 $categories = $req->fetchAll(PDO::FETCH_ASSOC);
@@ -59,17 +61,17 @@ if(isset($_POST["formsend"])) {
                     
                 } else {
 
-                    echo '<div class= "error_php">' . "L'extension de l'image n'est pas autorisé." . '</div>';
+                    $msg['error_file'] = "L'extension de l'image n'est pas autorisé.";
                 }
                     //Si l'image est trop grande on affiche le message
             } else {
 
-                echo '<div class= "error_php">' . "La taille de l'image est trop grande." . '</div>';
+                $msg['error_file'] = "La taille de l'image est trop grande.";
             }
 
         }else{
                 //Si aucun fichier n'a été envoyer on affiche le message
-                echo '<div class= "error_php">' . "Le téléchargement à échoué." . '</div>';
+                $msg['error_file'] =  "Le téléchargement à échoué.";
         }
     }
 }
@@ -127,6 +129,7 @@ if(isset($_POST["formsend"])) {
 
             <div>
                 <input type="file" name="imageArticle">
+                <p><?= $msg['error_file'] ?></p>
             </div>
 
             <div class="form_container">
