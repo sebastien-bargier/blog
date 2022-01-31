@@ -23,6 +23,7 @@ if (isset($_GET['categorie']) && !empty($_GET['categorie'])) {
     $categorie = 'WHERE id_categorie = '.strip_tags($_GET['categorie']);
 }
 else {
+
     $categorie = '';
 }
 
@@ -78,27 +79,15 @@ $filtreCategorie->execute(array());
         <!-- Categories -->
         <section class="categories">
 
-        <form class="categorie_form" action="" method="GET">
-
-            <select name="categorie">
-
-                <option value="0">Toutes les catégories</option>
+                <a href="../pages/articles.php?categorie=0"><p>Toutes les catégories</p>
 
                 <?php
                 
-                while($valCategorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) {
+                while($categorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) : ?>
+
+                    <a href="../pages/articles.php?categorie=<?= $categorie['id'] ?>"><p><?= $categorie['nom'] ?></p></a>
                                                 
-                    echo "<option value=" . $valCategorie["id"] . ">" . $valCategorie["nom"] . "</option>";
-                                                
-                }
-
-                ?>
-
-                <input type="submit" class="categorie_btn" name="formsend" value="OK">
-
-            </select>
-
-        </form>
+                <?php endwhile; ?>
 
         </section>
 

@@ -129,21 +129,14 @@ form h1 {
     font-family: 'Roboto Slab', sans-serif;
 }
 
-.categorie_form {
+.categories {
     display: flex;
-    flex-direction: row;
-    margin: 20px auto;
-    padding: 20px 0px;
     justify-content: center;
-    border-radius: initial;
-    align-items: initial;
 }
 
-.categorie_btn {
-    margin: 0;
-    padding: 0;
-    cursor: pointer;
-}  
+.categories p {
+    margin: 20px;
+}
 
 .btn {
     padding: 5px 32px;
