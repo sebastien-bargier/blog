@@ -8,7 +8,14 @@ session_start();
 
 require '../common/config.php'; 
 
+// REDIRECTION UTILISATEUR NON CONNECTE
+if (!isset($_SESSION['id'])) {
+    header("location: connexion.php");
+    exit;
+}
+
 $msg['error_file'] = "";
+$msg['error_connexion'] = "";
 
 $req = $db->prepare("SELECT * FROM categories");
 $req->execute();
@@ -18,61 +25,57 @@ $categories = $req->fetchAll(PDO::FETCH_ASSOC);
 
 if(isset($_POST["formsend"])) {
 
-    // Vérirfication si le contenu de l'article n'est pas vide
+    // Vérification si le contenu de l'article n'est pas vide
+    $titreArticle = htmlspecialchars($_POST['titreArticle']);
+    $categorieArticle = $_POST['categorieArticle'];
+    $article = htmlspecialchars($_POST['contenuArticle']);
+    
+    if (isset($_FILES['imageArticle']) && $_FILES['imageArticle']['error'] == 0) {
 
-    if(!empty($_POST['contenuArticle'])) {
+        // Testons si le fichier n'est pas trop gros
 
-        $titreArticle = htmlspecialchars($_POST['titreArticle']);
-        $categorieArticle = $_POST['categorieArticle'];
-        $article = htmlspecialchars($_POST['contenuArticle']);
-         
-        if (isset($_FILES['imageArticle']) && $_FILES['imageArticle']['error'] == 0) {
+        if ($_FILES['imageArticle']['size'] <= 1000000) {
 
-            // Testons si le fichier n'est pas trop gros
+            // Testons si l'extension est autorisée
 
-            if ($_FILES['imageArticle']['size'] <= 1000000) {
+            $infosfichier = pathinfo($_FILES['imageArticle']['name']);
+            $extension_upload = $infosfichier['extension'];
+            $extensions_autorisees = array('jpg', 'jpeg', 'gif', 'png');
 
-                // Testons si l'extension est autorisée
+            $imageArticle = $_FILES['imageArticle']['name'];
+            $nomImage = $infosfichier['filename'];
 
-                $infosfichier = pathinfo($_FILES['imageArticle']['name']);
-                $extension_upload = $infosfichier['extension'];
-                $extensions_autorisees = array('jpg', 'jpeg', 'gif', 'png');
+            if (in_array($extension_upload, $extensions_autorisees)){
 
-                $imageArticle = $_FILES['imageArticle']['name'];
-                $nomImage = $infosfichier['filename'];
+                // On peut valider le fichier et le stocker définitivement dans le dossier 'public/images'
 
-                if (in_array($extension_upload, $extensions_autorisees)){
+                move_uploaded_file($_FILES['imageArticle']['tmp_name'], '../../public/images/' .basename($imageArticle));
 
-                    // On peut valider le fichier et le stocker définitivement dans le dossier 'public/images'
+                // Insertion des données dans la table
 
-                    move_uploaded_file($_FILES['imageArticle']['tmp_name'], '../../public/images/' .basename($imageArticle));
-
-                    // Insertion des données dans la table
-
-                    $insertArticle = $db->prepare("INSERT INTO articles (titre, article, image, nom_image, id_utilisateur, id_categorie, date) VALUES(:titre, :article, :image, :nom_image, :id_utilisateur, :id_categorie, NOW())");
-                    $insertArticle->execute(array(
-                        'titre' => $titreArticle,
-                        'article' => $article,
-                        'image' => $imageArticle,
-                        'nom_image' => $nomImage,
-                        'id_utilisateur' => $_SESSION['id'],
-                        'id_categorie' => $categorieArticle
-                    ));
-                    
-                } else {
-
-                    $msg['error_file'] = "L'extension de l'image n'est pas autorisé.";
-                }
-                    //Si l'image est trop grande on affiche le message
+                $insertArticle = $db->prepare("INSERT INTO articles (titre, article, image, nom_image, id_utilisateur, id_categorie, date) VALUES(:titre, :article, :image, :nom_image, :id_utilisateur, :id_categorie, NOW())");
+                $insertArticle->execute(array(
+                    'titre' => $titreArticle,
+                    'article' => $article,
+                    'image' => $imageArticle,
+                    'nom_image' => $nomImage,
+                    'id_utilisateur' => $_SESSION['id'],
+                    'id_categorie' => $categorieArticle
+                ));
+                
             } else {
 
-                $msg['error_file'] = "La taille de l'image est trop grande.";
+                $msg['error_file'] = "L'extension de l'image n'est pas autorisé.";
             }
+                //Si l'image est trop grande on affiche le message
+        } else {
 
-        }else{
-                //Si aucun fichier n'a été envoyer on affiche le message
-                $msg['error_file'] =  "Le téléchargement à échoué.";
+            $msg['error_file'] = "La taille de l'image est trop grande.";
         }
+
+    }else{
+            //Si aucun fichier n'a été envoyer on affiche le message
+            $msg['error_file'] =  "Le téléchargement à échoué.";
     }
 }
 
@@ -137,6 +140,8 @@ if(isset($_POST["formsend"])) {
             </div>
 
         </form>
+
+        <p><?= $msg['error_file'] ?></p>
     <!--Import du footer -->
     
     <footer>
