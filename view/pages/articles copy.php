@@ -23,7 +23,6 @@ if (isset($_GET['categorie']) && !empty($_GET['categorie'])) {
     $categorie = 'WHERE id_categorie = '.strip_tags($_GET['categorie']);
 }
 else {
-
     $categorie = '';
 }
 
@@ -79,15 +78,27 @@ $filtreCategorie->execute(array());
         <!-- Categories -->
         <section class="categories">
 
-                <a href="../pages/articles.php"><p>Toutes les catégories</p>
+        <form class="categorie_form" action="" method="GET">
+
+            <select name="categorie">
+
+                <option value="0">Toutes les catégories</option>
 
                 <?php
                 
-                while($categorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) : ?>
-
-                    <a href="../pages/articles.php?categorie=<?= $categorie['id'] ?>"><p><?= $categorie['nom'] ?></p></a>
+                while($valCategorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) {
                                                 
-                <?php endwhile; ?>
+                    echo "<option value=" . $valCategorie["id"] . ">" . $valCategorie["nom"] . "</option>";
+                                                
+                }
+
+                ?>
+
+                <input type="submit" class="categorie_btn" name="formsend" value="OK">
+
+            </select>
+
+        </form>
 
         </section>
 
@@ -98,12 +109,6 @@ $filtreCategorie->execute(array());
 
             <article>
 
-<<<<<<< HEAD
-                <p><?= $article['article'] ?></p>
-
-            </article>
-
-=======
                 <a href="../pages/article.php?id=<?= $article['id'] ?>">
 
                     <p>Categorie - <?= $article['nom'] ?></p>
@@ -118,31 +123,10 @@ $filtreCategorie->execute(array());
 
                 </a>
             </article>
->>>>>>> sebastien-bargier
         <?php endforeach; ?>
 
         </section>
 
-<<<<<<< HEAD
-        <div class="pagination">
-
-        <?php for($page = 1; $page <= $nombreDePages; $page++) : ?>
-
-            <li>
-                <a href="articles.php?page=<?= $page ?>"><?= $page ?></a>
-            </li>
-
-        <?php endfor; ?>
-
-        </div>
-
-    </main>
-
-    <footer>
-        <?php require '../common/footer.php'; ?>
-    </footer>
-    
-=======
         <!-- Pagination -->
         <section class="pagination">
 
@@ -185,6 +169,5 @@ $filtreCategorie->execute(array());
         <?php require '../common/footer.php'; ?>
     </footer>
 
->>>>>>> sebastien-bargier
 </body>
 </html>
