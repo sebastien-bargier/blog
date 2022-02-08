@@ -1,8 +1,8 @@
 <?php
 
-// ----------------------------
-// ESPACE ADMIN <<<<<<<<<<<<<<<
-// ----------------------------
+// ------------------------------------------
+// ESPACE ADMINISTRATION <<<<<<<<<<<<<<<<<<<<
+// ------------------------------------------
 
 // Démarrage de la session
 
@@ -12,7 +12,23 @@ session_start();
 
 require '../common/config.php'; 
 
+// Checker si l'utilisateur est déjà connecté ou pas
 
+if (!isset($_SESSION['id'])) {
+
+    // On redirige vers l'accueil
+
+    header('Location:accueil.php');
+
+}
+
+if ($_SESSION['id_droits'] == 1 OR $_SESSION['id_droits'] == 42) {
+
+    // On redirige vers l'accueil
+
+    header('Location:accueil.php');
+
+}
 
 ?>
 
@@ -23,143 +39,262 @@ require '../common/config.php';
 $req = $db->prepare('SELECT * FROM utilisateurs INNER JOIN droits ON utilisateurs.id_droits = droits.id  ORDER BY utilisateurs.id ASC');
 $req->execute(array());
 
+$req2 = $db->prepare("SELECT * FROM articles INNER JOIN categories ON articles.id_categorie = categories.id");
+$req2->execute();
+
+$req3 = $db->prepare("SELECT * FROM categories");
+$req3->execute();
+
+$req4 = $db->prepare("SELECT * FROM commentaires INNER JOIN articles ON commentaires.id_article = articles.id INNER JOIN utilisateurs ON commentaires.id_utilisateur = utilisateurs.id ORDER BY articles.titre ASC");
+$req4->execute();
+
+
 ?>
 
-<?php
 
 
-?>
-
-<!--Création du tableau -->
+<!--Création du formulaire de connexion-->
 
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Espace Administrateur</title>
-<link rel="stylesheet" href="../../public/css/style.css">
-<link rel="icon" href="favicon.ico" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
+    <title>Innovatech - Administration</title>
+    <link rel="stylesheet" href="../../public/css/styles.css">
 </head>
-
 <body>
-  
-<!--Import du header -->
+    
+    <!-- HEADER -->
 
-<header>
-
-<?php include('../common/header.php'); ?>
-
-</header>
-
-<main>
-
-<!-- Lister les utilisateurs -->
-
-<section>
-  
-  <div class="big_container">
-    <div class=tbl_container>
-      <h1>Liste des utilisateurs</h1>
-      <div class="tbl-header">
-        <table>
-          <thead>
-            
-            <tr>
-              <th>Nom d'utilisateur</th>
-              <th>Adresse e-mail</th>
-              <th>Type de compte</th>
-            </tr>
-        
-          </thead>
-        </table>
-      </div>
+    <header class="header">
  
-      <div class="tbl-content">
-        <table>
-          <tbody>
-            
-            <?php while($data = $req->fetch(PDO::FETCH_ASSOC)) : ?>
-            
-            <tr>
-              <td><?php echo htmlspecialchars($data['login']); ?></td>
-              <td><?php echo htmlspecialchars($data['email']); ?></td>
-              <td><?php echo htmlspecialchars($data['nom']); ?></td>
+    <?php include ('../common/header.php'); ?>
 
-            </tr>
-            
-            <?php endwhile; ?>
+    </header>
 
-          </tbody>
-        </table>
-      </div>
-              
-      <div class="buttons">
-              
-              <ul>
-                <li><a href="test.php">Modifier un droit d'accès</a></li>
-                <li><a href="supp.php">Supprimer un utilisateur</a></li>
-              </ul>
+    <!-- MAIN -->
+
+    <div class="marge"></div>
+
+    <main class="main2">
+
+    <!-- Lister les utilisateurs -->
+
+        <section>
+        
+        <div class="panel_container">
+            <div class=tbl_container>
+            <h1>Liste des utilisateurs</h1>
+            <div class="tbl-header">
+                <table>
+                <thead>
+                    
+                    <tr>
+                    <th>Nom d'utilisateur</th>
+                    <th>Adresse e-mail</th>
+                    <th>Type de compte</th>
+                    <th>Suppression</th>
+                    </tr>
+                
+                </thead>
+                </table>
+            </div>
+        
+            <div class="tbl-content">
+                <table>
+                <tbody>
+                    
+                    <?php while($data = $req->fetch(PDO::FETCH_ASSOC)) : ?>
+                    
+                    <tr>
+                    <td><?php echo htmlspecialchars($data['login']); ?></td>
+                    <td><?php echo htmlspecialchars($data['email']); ?></td>
+                    <td><?php echo htmlspecialchars($data['nom']); ?></td>
+                    
+
+                    </tr>
+                    
+                    <?php endwhile; ?>
+
+                </tbody>
+                </table>
+            </div>
+                    
+            <div class="buttons">
+                    
+                    
+                    <a href="mod_acces.php">Modifier un droit d'accès</a>
+                    
+                    </div>
+
+            </div> 
+        </div>
+        
+        </section>
+
+        <!-- Lister les articles -->
+
+        <section>
+        
+
+        <div class="big_container">
+        <div class="panel_container">
+            <div class=tbl_container>
+            <h1>Liste des articles</h1>
+            <div class="tbl-header">
+                <table>
+                <thead>
+                    
+                    <tr>
+                    <th>Titre</th>
+                    <th>Contenu</th>
+                    <th>Catégorie</th>
+                    <th>Date</th>
+                    <th>Suppression</th>
+                    </tr>
+                
+                </thead>
+                </table>
+            </div>
+        
+            <div class="tbl-content">
+            <form action="" method="post">  
+            <table>
+                <tbody>
+                    
+                    <?php while($data = $req2->fetch(PDO::FETCH_ASSOC)) : ?>
+                    
+                    <tr>
+                    <td><?php echo htmlspecialchars($data['titre']); ?></td>
+                    <td><?php echo htmlspecialchars($data['article']); ?></td>
+                    <td><?php echo htmlspecialchars($data['nom']); ?></td>
+                    <td><?php echo htmlspecialchars($data['date']); ?></td>
+                    <td>Supprimer</td>
+
+                    </tr>
+                    
+                    <?php endwhile; ?>
+                </tbody>
+                </table>
+                    </form>
             </div>
 
-    </div> 
-  </div>
-  
-</section>
+            <div class="buttons">
+                    
+                <a href="creer-article.php">Ajouter un article</a>
 
-<!-- Lister les articles -->
+            </div> 
 
-<section>
-  
-  <div class="big_container">
-    <div class=tbl_container>
-      <h1>Liste des articles</h1>
-      <div class="tbl-header">
-        <table>
-          <thead>
-            
-            <tr>
-              <th>Titre</th>
-              <th>Contenu</th>
-              <th>Catégorie</th>
-            </tr>
+
+        </div>
+        </section>
+
+            <!-- Lister les catégories -->
+
+            <section>
         
-          </thead>
-        </table>
-      </div>
+        <div class="panel_container">
+            <div class=tbl_container>
+            <h1>Liste des catégories</h1>
+            <div class="tbl-header">
+                <table>
+                <thead>
+                    
+                    <tr>
+                    <th>Nom de la catégorie</th>
+                    </tr>
+                
+                </thead>
+                </table>
+            </div>
+        
+            <div class="tbl-content">
+                <table>
+                <tbody>
+                    
+                    <?php while($data = $req3->fetch(PDO::FETCH_ASSOC)) : ?>
+                    
+                    <tr>
+                    <td><?php echo htmlspecialchars($data['nom']); ?></td>
+                    </tr>
+                    
+                    <?php endwhile; ?>
+
+                </tbody>
+                </table>
+            </div>
+                    
+            <div class="buttons">
+                    
+                    
+                    <a href="add_categorie.php">Ajouter une catégorie</a>
+                    
+                    </div>
+
+            </div> 
+        </div>
+        </section>
+
+    <!-- Lister les commentaires -->
+
+    <section>
+        
+        <div class="panel_container">
+            <div class=tbl_container>
+            <h1>Liste des commentaires</h1>
+            <div class="tbl-header">
+                <table>
+                <thead>
+                    
+                    <tr>
+                    <th>Commentaire</th>
+                    <th>Nom de l'article</th>
+                    <th>Nom de l'utilisateur</th>
+                    <th>Date</th>
+                    </tr>
+                
+                </thead>
+                </table>
+            </div>
+        
+            <div class="tbl-content">
+                <table>
+                <tbody>
+                    
+                    <?php while($data = $req4->fetch(PDO::FETCH_ASSOC)) : ?>
+                    
+                    <tr>
+                    <td><?php echo htmlspecialchars($data['commentaire']); ?></td>
+                    <td><?php echo htmlspecialchars($data['titre']); ?></td>
+                    <td><?php echo htmlspecialchars($data['login']); ?></td>
+                    <td><?php echo htmlspecialchars($data['date']); ?></td>
+                    </tr>
+                    
+                    <?php endwhile; ?>
+
+                </tbody>
+                </table>
+            </div>
+                    
+            <div class="buttons"> </div>
+
+            </div> 
+        </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
  
-      <div class="tbl-content">
-        <table>
-          <tbody>
-            
-            <?php while($data = $req->fetch(PDO::FETCH_ASSOC)) : ?>
-            
-            <tr>
-              <td><?php echo htmlspecialchars($data['login']); ?></td>
-              <td><?php echo htmlspecialchars($data['email']); ?></td>
-              <td><?php echo htmlspecialchars($data['nom']); ?></td>
+    <?php include ('../common/footer.php'); ?>
 
-            </tr>
-            
-            <?php endwhile; ?>
-
-          </tbody>
-        </table>
-      </div>
-    </div> 
-
-
-</div>
-</section>
-            </main>
-
-<!--Import du footer -->
-
-<footer>
-
-<?php include('../common/footer.php'); ?>
-
-</footer>
-
+    </footer>
 
 </body>
+</html>
+    

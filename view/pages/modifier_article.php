@@ -32,9 +32,10 @@ if ($_SESSION['id_droits'] == 1) {
 
 // Récupération des catégories
 
-$req = $db->prepare("SELECT * FROM categories");
+$req = $db->prepare("SELECT * FROM categories WHERE id= ?");
 $req->execute();
 $categories = $req->fetchAll(PDO::FETCH_ASSOC);
+$row = $check->rowCount();
 
 ?>
 
@@ -47,7 +48,7 @@ $categories = $req->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
-    <title>Innovatech - Créer un article</title>
+    <title>Innovatech - Modifier un article</title>
     <link rel="stylesheet" href="../../public/css/styles.css">
 </head>
 <body>
@@ -62,16 +63,16 @@ $categories = $req->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- MAIN -->
 
-    <main class="main">
+    <main class="main2">
 
         <div class="center">
 
-        <h1>Création d'article</h1>
+        <h1>Modification d'article</h1>
 
         <form action="" method="POST" enctype="multipart/form-data">
 
             <div class="txt_field">
-                <input name="titreArticle" required="required" autocomplete="off">
+                <input name="titreArticle" required="required" autocomplete="off" value="<?php echo $data['titre']; ?>">
                 <span></span>
                 <label>Titre de l'article</label>
             </div>

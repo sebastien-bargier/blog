@@ -59,7 +59,7 @@ $row = $check->rowCount();
 
         </header>
 
-        <main class="main">
+        <main class="main2">
             
             <div class="center">
                 
@@ -125,9 +125,9 @@ $row = $check->rowCount();
 
                 // Si mise à jour 'Login & Email' réussie
 
-                // echo '<div class= "success_php">' . "Vos données ont été modifiées." . "</br>" . '</div>';
+                echo '<div class= "success_php">' . "Vos données ont été modifiées." . "</br>" . '</div>';
                 
-                header("Location:modification.php?=data_saved");
+                header("Refresh:3");
             }
 
             else {
@@ -249,7 +249,8 @@ $row = $check->rowCount();
 
                 // echo '<div class= "success_php">' . "Vos données ont été modifiées." . "</br>" . '</div>';
                 
-                header("Location:modification.php?=data_saved");
+                echo '<div class= "success_php">' . "Vos données ont été modifiées." . "</br>" . '</div>';
+
             }
 
             else {
@@ -287,9 +288,9 @@ $row = $check->rowCount();
 
                     // Si mise à jour 'Mot de passe' réussie
 
-                    // echo '<div class= "success_php">' . "Votre mot de passe a été modifié." . '</div>';
+                    echo '<div class= "success_php">' . "Votre mot de passe a été modifié." . '</div>';
                     
-                    header('Location: modification.php?=password_changed');
+                    header('Refresh:3');
                     die();
 
                     }

@@ -46,7 +46,7 @@ if (isset($_SESSION['id'])) {
 
     <!-- MAIN -->
 
-    <main class="main">
+    <main class="main2">
 
         <div class="center">
             

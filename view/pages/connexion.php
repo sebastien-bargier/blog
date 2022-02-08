@@ -48,7 +48,7 @@ if (isset($_SESSION['id'])) {
 
     <!-- MAIN -->
 
-    <main class="main">
+    <main class="main2">
 
         <div class="center">
             
@@ -104,6 +104,8 @@ if(isset($_POST) AND !empty($_POST) ) {
 
       if (password_verify($password, $data['password'])) {
 
+        $_SESSION['id_droits'] = $data['id_droits'];
+
         // S'il s'agit du compte Administrateur
         
         if ($data['login'] == 'admin') {
@@ -111,6 +113,9 @@ if(isset($_POST) AND !empty($_POST) ) {
           // Création de la session Administrateur puis redirection vers admin.php
 
           $_SESSION['id'] = $data['id'];
+          $_SESSION['login'] = $data['login'];
+          $_SESSION['email'] = $data['email'];
+          $_SESSION['password'] = $data['password'];
 
           header('Location:admin.php?id=' . $_SESSION['id']);
           // echo 'Bonjour' . ' ' . $data['prenom'];
@@ -127,7 +132,7 @@ if(isset($_POST) AND !empty($_POST) ) {
           $_SESSION['login'] = $data['login'];
           $_SESSION['email'] = $data['email'];
           $_SESSION['password'] = $data['password'];
-          $_SESSION['id_droits'] = $data['id_droits'];
+         
             
           header('Location:accueil.php?id=' . $_SESSION['id']);
           // DEBUG => echo 'Bonjour' . ' ' . $data['prenom'];
