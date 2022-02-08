@@ -1,106 +1,350 @@
 <?php
+
+// ---------------------------------------------
+// TRAITEMENT DE L'ESPACE MEMBRE <<<<<<<<<<<<<<<
+// ---------------------------------------------
+
+// Démarrage de la session
+
 session_start();
 
-$msg['login'] = "";
-$msg['email'] = "";
-$msg['pwd'] = "";
-$msg['c-pwd'] = "";
+// Connexion à la base de donnée
 
-// CONNEXION BDD
-$db = new PDO('mysql:host=localhost;dbname=blog','root', '');
-
-// RECUPERE LES INFORMATIONS UTILISATEUR DE LA SESSION
-$req = $db->prepare("SELECT * FROM utilisateurs WHERE login = '".$_SESSION['login']."' ");
-$req->execute();
-$userSession = $req->fetchAll(PDO::FETCH_ASSOC);
-
-if(isset($_POST['mod']) && isset($_POST['mod']) == 'Modifier') {
-
-    $login = htmlentities(trim($_POST['login']));
-    $email = htmlentities(trim($_POST['email']));
-    $pwd = password_hash(trim($_POST['password']), PASSWORD_ARGON2ID);
-
-    $req = $db->prepare("SELECT login FROM utilisateurs WHERE login = :login");
-    $req->execute(array('login' => $login));
-    $result = $req->fetchAll(PDO::FETCH_ASSOC);
-
-    //var_dump($_SESSION['login']);
-
-    if(($result) && $login != $_SESSION['login']) {
-        $msg['login'] = "Ce login est déjà utilisé.";
-
-    } else {
-        if ($_POST["password"] == $_POST["confirm-password"]) {
-            // METTRE A JOUR INFORMATION UTILISATEUR EN BDD
-            $req = $db->prepare("UPDATE utilisateurs
-                                SET login = :login,
-                                email = :email,
-                                password = :password
-                                WHERE login = '".$_SESSION['login']."' ");
-            $updateUser = $req->execute(array(
-                'login' => $login,
-                'email' => $email,
-                'password' => $pwd
-            ));
-            
-            $_SESSION['login'] = $login;
-
-            header('Location: profil.php');
-        } else {
-            $msg['pwd'] = "Les mots de passe ne correspondent pas";
-        }
-    }
-}
-
+require '../common/config.php';
 
 ?>
- 
-<!DOCTYPE html>
-<html lang="en">
+
+<?php
+
+// Vérification si l'utilisateur s'est connecté correctement
+
+if (!isset($_SESSION['id']))
+{
+    header('Location:index.php?connexion_error');
+
+}
+
+?>
+
+<?php
+
+// Checker si le compte est présent dans la table
+
+$check = $db->prepare('SELECT * FROM utilisateurs WHERE id= ?');
+$check->execute(array($_SESSION['id']));
+$data = $check->fetch();
+$row = $check->rowCount();
+
+?>
+
+<!--Création du formulaire d'update du profil de l'utilisateur-->
+
+<!doctype html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../../public/css/style.css" />
-    <title>Profil</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
+    <title>Innovatech - Profil</title>
+    <link rel="stylesheet" href="../../public/css/styles.css">
 </head>
 <body>
 
-<header>
-    <?php require '../common/header.php'; ?>
-</header>
+        <!-- IMPORT DU HEADER -->
 
-<main>
-    
+        <header class="header">
 
-<form action='#' method='POST'>
+        <?php include ('../common/header.php'); ?>
 
-    <h1>Mon profil</h1>
+        </header>
 
-    <br />
+        <main class="main">
+            
+            <div class="center">
+                
+                <h1>Mon Profil</h1>
+                <p id="warning">Attention, changer son mot de passe entraînera une déconnexion.</p>
+                
+                <form method="post">
+                    
+                    <div class="txt_field">
+                        <input type="text" name="login" autocomplete="off" value=<?php echo $data['login']; ?>>
+                        <span></span>
+                        
+                    </div>
 
-    <label for="login">Login</label>
-    <input type="text" name="login" value="<?= $userSession[0]['login']; ?>">
-    <p class="error"><?= $msg['login'] ?></p>
+                    <div class="txt_field">
+                        <input type="email" name="email" autocomplete="off" value=<?php echo $data['email']; ?>>
+                        <span></span>
+                    </div>
+                
+                    <div class="txt_field">
+                        <input type="password" name="current_password" required autocomplete="off">
+                        <span></span>
+                        <label>Mot de passe</label>
+                    </div>
 
-    <label for="email">Email</label>
-    <input type="email" name="email" value="<?= $userSession[0]['email']; ?>">
-    <p class="error"><?= $msg['email'] ?></p>
 
-    <label for="password">Password</label>
-    <input type="password" name="password">
-    <p class="error"><?= $msg['pwd'] ?></p>
+                    <div class="txt_field">
+                        <input type="password" name="password" autocomplete="off">
+                        <span></span>
+                        <label>Nouveau mot de passe</label>
+                    </div>
 
-    <label for="confirm-password">Confirm password</label>
-    <input type="password" name="confirm-password">
-    <p class="error"><?= $msg['c-pwd'] ?></p>
+                    <div class="txt_field">
+                        <input type="password" name="cpassword" autocomplete="off">
+                        <span></span>
+                        <label>Confirmation du mot de passe</label>
+                    </div>
+                
+                    <input type="submit" name="formsend" value="Sauvegarder">
+            
+                <?php
 
-    <input type="submit" class="btn" name="mod" value="Modifier"></input>
-    </form>
-<main>
+    if(isset($_POST) AND !empty($_POST) ) { 
+
+        // Empêcher les failles XSS
+
+        $login = htmlspecialchars($_POST['login']);
+        $email = htmlspecialchars($_POST['email']);
+        $current_password = htmlspecialchars($_POST['current_password']);
+        $password = htmlspecialchars($_POST['password']);
+        $cpassword = htmlspecialchars($_POST['cpassword']);
+        
+        // Si le mot de passe actuel est correct
+
+        if (password_verify($current_password, $_SESSION['password'])) { 
+            
+            if ($_POST['login'] !== $data['login'] || $_POST['email'] !== $data['email']) {
+
+                // Mise à jour des données entrées par l'utilisateur
+
+                $update = $db->prepare("UPDATE utilisateurs SET login= ?, email = ? WHERE id = ?");
+                $update->execute(array($_POST['login'], $_POST['email'], $_SESSION['id']));
+
+                // Si mise à jour 'Login & Email' réussie
+
+                // echo '<div class= "success_php">' . "Vos données ont été modifiées." . "</br>" . '</div>';
+                
+                header("Location:modification.php?=data_saved");
+            }
+
+            else {
+
+                // Si les champs sont restés inchangés
+
+                echo '<div class= "error_php">' . "Vos données n'ont pas été modifiées." . "</br>" .'</div>';
+
+            }
+        
+            // Si l'utilisateur a décidé de changer son mot de passe
+                
+            if(isset($_POST['password']) && !empty($_POST['password'])) {
+
+                // Si le nouveau mot de passe est différent de l'ancien
+
+                if ($password != $current_password) {
+
+                    // Si les deux nouveaux mots de passe entrés sont identiques
+        
+                    if ($password == $cpassword) {
+
+                    // Hashage du mot de passe
+
+                    $cost = ['cost' => 12];
+                    $password = password_hash($password, PASSWORD_BCRYPT, $cost);
+                
+
+                    // Mise à jour du mot de passe entré par l'utilisateur
+                
+                    $update = $db->prepare("UPDATE utilisateurs SET password = :password WHERE id = :id");
+                    $update->execute(array('password' => $password, 'id' => $_SESSION['id']));
+
+                    $password = $_POST['password'];
+
+                    // Si mise à jour 'Mot de passe' réussie
+
+                    // echo '<div class= "success_php">' . "Votre mot de passe a été modifié." . '</div>';
+                    
+                    header('Location: ../../view/common/deconnexion.php?');
+                    die();
+
+                    }
+
+                    else {
+
+                        // Si les nouveaux mots de passe ne sont pas identiques
+            
+                        echo '<div class= "error_php">' . "Les mots de passe ne sont pas identiques." . '</div>';
+
+
+                    }
+
+                }
+
+                else {
+
+                    
+                    // Si le nouveau mot de passe est identique au mot de passe actuel
+                    
+                    echo '<div class= "error_php">' .  "Le nouveau mot de passe est identique au mot de passe actuel." . '</div>';
+
+                }
+
+
+            }
+
+            else {
+
+                echo '<div class= "error_php">' . "Votre mot de passe n'a pas été modifié." . '</div>'; 
+
+            }
+
+        }
+
+        else {
+
+        // Si le mot de passe ne correspond pas
+        
+        echo '<div class= "error_php">' . "Mot de passe incorrect." . '</div>';
+
+        }
+
+    }
+
+    ?>
+
+        <br>
+        <br>
+
+            </form>
+    </div>
+        </div>
+
+    <?php
+
+    if(isset($_POST) AND !empty($_POST) ) { 
+
+        // Empêcher les failles XSS
+
+        $login = htmlspecialchars($_POST['login']);
+        $email = htmlspecialchars($_POST['email']);
+        $current_password = htmlspecialchars($_POST['current_password']);
+        $password = htmlspecialchars($_POST['password']);
+        $cpassword = htmlspecialchars($_POST['cpassword']);
+        
+        // Si le mot de passe actuel est correct
+
+        if (password_verify($current_password, $_SESSION['password'])) { 
+            
+            if ($_POST['login'] !== $data['login'] || $_POST['email'] !== $data['email']) {
+
+                // Mise à jour des données entrées par l'utilisateur
+
+                $update = $db->prepare("UPDATE utilisateurs SET login= ?, email = ? WHERE id = ?");
+                $update->execute(array($_POST['login'], $_POST['email'], $_SESSION['id']));
+
+                // Si mise à jour 'Prénom et Nom' réussie
+
+                // echo '<div class= "success_php">' . "Vos données ont été modifiées." . "</br>" . '</div>';
+                
+                header("Location:modification.php?=data_saved");
+            }
+
+            else {
+
+                // Si les champs sont restés inchangés
+
+                echo '<div class= "error_php">' . "Vos données n'ont pas été modifiées." . "</br>" .'</div>';
+
+            }
+        
+            // Si l'utilisateur a décidé de changer son mot de passe
+                
+            if(isset($_POST['password']) && !empty($_POST['password'])) {
+
+                // Si le nouveau mot de passe est différent de l'ancien
+
+                if ($password != $current_password) {
+
+                    // Si les deux nouveaux mots de passe entrés sont identiques
+        
+                    if ($password == $cpassword) {
+
+                    // Hashage du mot de passe
+
+                    $cost = ['cost' => 12];
+                    $password = password_hash($password, PASSWORD_BCRYPT, $cost);
+                
+
+                    // Mise à jour du mot de passe entré par l'utilisateur
+                
+                    $update = $db->prepare("UPDATE utilisateurs SET password = :password WHERE id = :id");
+                    $update->execute(array('password' => $password, 'id' => $_SESSION['id']));
+
+                    $password = $_POST['password'];
+
+                    // Si mise à jour 'Mot de passe' réussie
+
+                    // echo '<div class= "success_php">' . "Votre mot de passe a été modifié." . '</div>';
+                    
+                    header('Location: modification.php?=password_changed');
+                    die();
+
+                    }
+
+                    else {
+
+                        // Si les nouveaux mots de passe ne sont pas identiques
+            
+                        echo '<div class= "error_php">' . "Les mots de passe ne sont pas identiques." . '</div>';
+
+
+                    }
+
+                }
+
+                else {
+
+                    
+                    // Si le nouveau mot de passe est identique au mot de passe actuel
+                    
+                    echo '<div class= "error_php">' .  "Le nouveau mot de passe est identique au mot de passe actuel." . '</div>';
+
+                }
+
+
+            }
+
+            else {
+
+                echo '<div class= "error_php">' . "Votre mot de passe n'a pas été modifié." . '</div>'; 
+
+            }
+
+        }
+
+        else {
+
+        // Si le mot de passe ne correspond pas
+        
+        echo '<div class= "error_php">' . "Mot de passe incorrect." . '</div>';
+
+        }
+
+    }
+
+    ?>
+
+    </main>
+
+<!--IMPORT DU FOOTER -->
 
 <footer>
-    <?php require '../common/footer.php'; ?>
+
+<?php include ('../common/footer.php'); ?>
+
 </footer>
 
 </body>

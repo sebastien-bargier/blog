@@ -1,103 +1,185 @@
 <?php
 
-// ------------------------------------------
+// --------------------------------------------------
 // TRAITEMENT AFFICHAGES DES ARTICLES <<<<<<<<<<<<<<<
-// ------------------------------------------
+// --------------------------------------------------
 
 session_start();
 
-require '../common/config.php'; 
+require '../common/config.php';
 
-// DETERMINE SUR QUELLE PAGE ON SE TROUVE
-if(isset($_GET['page']) && !empty($_GET['page'])){
-    $pageCourante = (int) strip_tags($_GET['page']);
+// On détermine sur quelle page on se trouve
+if(isset($_GET['start']) && !empty($_GET['start'])) {
+
+    $currentPage = (int) strip_tags($_GET['start']);
+
 }else{
-    $pageCourante = 1;
+
+    $currentPage = 1;
+}
+// On détermine dans quelle catégorie on se trouve
+if (isset($_GET['categorie']) && !empty($_GET['categorie'])) {
+
+    $categorie = 'WHERE id_categorie = '.strip_tags($_GET['categorie']);
+}
+else {
+
+    $categorie = '';
 }
 
 
-// COMPTE LE NOMBRE ARTICLE TOTAL EN BDD
-$req = $db->prepare("SELECT COUNT(*) AS compteur FROM articles");
-$req->execute();
+// On détermine le nombre total d'articles
+$requete = $db->prepare('SELECT  COUNT(*) AS nb_articles FROM `articles` '.$categorie.'');
 
-// RECUPERE LE NOMBRE D'ARTICLE
-$result = $req->fetch();
-$nombreArticlesBDD = (int) $result['compteur'];
+// On exécute
+$requete->execute();
 
-// NOMBRE TOTAL ARTICLES PAR PAGE
-$articlesParPage = 5;
+// On récupère le nombre d'articles
+$result = $requete->fetch();
 
-// CALCUL NOMBRE DE PAGE TOTAL
-$nombreDePages = ceil($nombreArticlesBDD/$articlesParPage);
+$nbArticles = (int) $result['nb_articles'];
 
-// SPECIFIER LA VALEUR DE DEPART
-$premierArticle = ($pageCourante * $articlesParPage) - $articlesParPage;
+// On détermine le nombre d'articles par page
+$parPage = 5;
 
-// REQUETE RECUPERATION ARTICLES PAR ORDRE DU PLUS RECENTS AU PLUS ANCIENS (DESC)
-$requete = $db->prepare("SELECT * FROM articles INNER JOIN categories ON articles.id_categorie = categories.id ORDER BY date DESC LIMIT $premierArticle, $articlesParPage;");
-$requete ->execute();
-$articles = $requete->fetchAll(PDO::FETCH_ASSOC);
+// On calcule le nombre de pages total
+$pages = ceil($nbArticles / $parPage);
+
+// Calcul du 1er article de la page
+$premier = ($currentPage * $parPage) - $parPage;
+
+// On récupère les données de tous les articles
+$requete = $db->prepare('SELECT * FROM categories INNER JOIN articles ON articles.id_categorie = categories.id '.$categorie.' ORDER BY date DESC LIMIT '.$premier.', '.$parPage.'');
+$requete->execute();
+$articles = $requete->fetchAll();
+
+// REQUETE CHOIX CATEGORIE 
+$filtreCategorie = $db->prepare("SELECT * FROM categories");
+$filtreCategorie->execute(array());
 
 ?>
 
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Les articles</title>
-<link rel="stylesheet" href="../../public/css/style.css">
-<link rel="icon" href="favicon.ico" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
+    <title>Innovatech - Articles</title>
+    <link rel="stylesheet" href="../../public/css/styles.css">
 </head>
 <body>
+    
+    <!-- IMPORT DU HEADER -->
 
-    <!--Import du header -->
-
-    <header>
-
+    <header class="header">
+    
     <?php include ('../common/header.php'); ?>
- 
+
     </header>
 
-    <main>
-     
-        <section>
+    <!-- MAIN -->
 
-        <?php foreach($articles as $article) : ?>
+    <main class="main">
+    
+        <div class="marge"></div>
 
-            <article>
+        <section id="categories">
 
-                <p>Categorie - <?= $article['nom'] ?></p>
+            <!-- PARTIE CATEGORIES -->
 
-                <h3><?= $article['titre'] ?></h3>
+            <a href="../pages/articles.php"><p>Toutes les catégories</p></a>
 
-                <img src="../../public/images<?=$article['image'] ?>" alt="<?= $article['nom_image'] ?>">
+            <?php
 
-                <p><?= $article['article'] ?></p>
+            while($categorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) : ?>
 
-            </article>
+            <a href="../pages/articles.php?categorie=<?= $categorie['id'] ?>"><p><?= $categorie['nom'] ?></p></a>
+                                        
+            <?php endwhile; ?>
 
-        <?php endforeach; ?>
+        </section>
+        
+        <!-- PARTIE ARTICLES -->
+
+            <!-- ARTICLES -->
+
+            <div class="wrapper_article">
+
+            <?php foreach($articles as $article) : ?>
+
+                <div class="card">
+
+                    <div class="card-header">
+                    
+                        <img src="../../public/images/<?=$article['image'] ?>" >
+
+                    </div>
+
+                    <div class="card-body">
+                        <span class="tag"><?= $article['nom'] ?></span>
+                        <h1><?= $article['titre'] ?></h1>
+                        <p><?= $article['article'] ?></p>
+                        <a href="../pages/article.php?id=<?= $article['id'] ?>" class="btn">Lire la suite</a>
+
+                    </div>
+
+                </div>
+                
+                <?php endforeach; ?>
+
+            </div>
 
         </section>
 
         <div class="pagination">
+        
+        <!-- PARTIE PAGINATION -->
 
-        <?php for($page = 1; $page <= $nombreDePages; $page++) : ?>
+        <?php
 
-            <li>
-                <a href="articles.php?page=<?= $page ?>"><?= $page ?></a>
-            </li>
+            if ($currentPage != 1) {
 
-        <?php endfor; ?>
+                echo '<a href="articles.php?';
+                
+                if (isset($_GET['categorie'])) {
+                    echo 'categorie='.$_GET['categorie'].'&';
+                } 
+
+                echo 'start='.($currentPage-1).'">Précédent</a>'; 
+            } 
+            
+            for($page = 1; $page <= $pages; $page++) {
+                    
+                echo'<a href="articles.php?start='.$page.'">'.$page.'</a>';       
+            }
+
+            if ($currentPage < $pages) {
+
+                echo '<a href="articles.php?';
+                
+                if (isset($_GET['categorie'])) {
+
+                    echo 'categorie='.$_GET['categorie'].'&';
+                }   
+                
+                echo 'start='.($currentPage+1).'">Suivant</a>';
+            }
+
+            ?>
 
         </div>
 
     </main>
 
+    <!-- IMPORT DU FOOTER -->
+
     <footer>
-        <?php require '../common/footer.php'; ?>
+
+    <?php include ('../common/footer.php'); ?>
+
     </footer>
-    
+
 </body>
 </html>

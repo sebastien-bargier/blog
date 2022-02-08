@@ -26,54 +26,53 @@ if (isset($_SESSION['id'])) {
 
 <!--Création du formulaire de connexion-->
 
-
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Connexion</title>
-<link rel="stylesheet" href="../../public/css/style.css">
-<link rel="icon" href="favicon.ico" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
+    <title>Innovatech - Connexion</title>
+    <link rel="stylesheet" href="../../public/css/styles.css">
 </head>
 <body>
-
-<!--Import du header -->
-
-<header>
-
-<?php include ('../common/header.php'); ?>
-
-</header>
-
-<main>
-
-<!-- Formulaire -->
-
-<div class="user_login">
     
-    <form class="login_form" action="" method="POST">
-        
-        <h1 class="login_text">Connexion</h1>
+    <!-- HEADER -->
 
-        <div class="form_container">
-        <input type="text" class="form_input" name="login" placeholder="Nom d'utilisateur" required="required" autocomplete="off">
-        </div>
-        
-        <div class="form_container">
-        <input type="password" class="form_input" name="password" placeholder="Mot de passe" required="required" autocomplete="off">
-        </div>
-        
-        <div class="form_container">
-        <input type="submit" class="btn" name="formsend" value="Se connecter">
-        </div>    
+    <header class="header">
+ 
+    <?php include ('../common/header.php'); ?>
 
-        <p>Vous n'avez pas de compte?</p>
-        <p class="login_register_text"><a href="inscription.php"> Inscrivez-vous ici.</a></p>
-    
-    </form>   
+    </header>
 
-</div>
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <div class="center">
+            
+            <h1>Connexion</h1>
+            
+            <form method="post">
+                <div class="txt_field">
+                    <input type="text" name="login" required autocomplete="off">
+                    <span></span>
+                    <label>Nom d'utilisateur</label>
+                </div>
+              
+                <div class="txt_field">
+                    <input type="password" name="password" required autocomplete="off">
+                    <span></span>
+                    <label>Mot de passe</label>
+                </div>
+            
+                <div class="pass">Mot de passe oublié ?</div>
+                    <input type="submit" name="formsend" value="Se connecter">
+                    <div class="signup_link">
+                    <p>Vous n'avez pas de compte ?</p><br>
+                     <a href="inscription.php">Inscrivez-vous ici.</a>
+
 
 <?php
 
@@ -170,16 +169,21 @@ if(isset($_POST) AND !empty($_POST) ) {
 }
 
 ?>
+            
+                </div>
+            
+            </form>
+        </div>
 
-</main>
+    </main>
 
-<!--Import du footer -->
- 
-<footer>
+    <!--IMPORT DU FOOTER -->
 
-<?php include ('../common/footer.php'); ?>
+    <footer>
 
-</footer>
+    <?php include ('../common/footer.php'); ?>
+
+    </footer>
 
 </body>
 </html>

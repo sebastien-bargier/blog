@@ -8,6 +8,9 @@ session_start();
 
 require '../common/config.php'; 
 
+// Initalisation variable vide message erreur commentaire
+$msg['commentaire'] = "";
+
 // DETERMINE SUR QUELLE PAGE ON SE TROUVE
 
 if(isset($_GET['id']) && !empty($_GET['id'])) {
@@ -23,7 +26,7 @@ $requete->execute(array('getid' => $getid));
 $article = $requete->fetchAll(PDO::FETCH_ASSOC); 
 
 
-// Récup7re les commentaires utilisateur lié a l'article
+// Récupère les commentaires utilisateur lié a l'article
 
 $requete = $db->prepare("SELECT * FROM commentaires c INNER JOIN utilisateurs u ON c.id_utilisateur = u.id WHERE id_article = :getid");
 $requete->execute(array('getid' => $getid));
@@ -34,26 +37,32 @@ $commentaire = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 if(isset($_POST) && !empty($_POST)) {
 
+    // Verification si un utilisateur est connecté
+    if(isset($_SESSION['id'])) {
     // Vérification champ commentaire
 
-    if(!empty($_POST['commentaire'])) {
+        if(!empty($_POST['commentaire'])) {
 
-        $commentaire = htmlspecialchars($_POST['commentaire']);
+            $commentaire = htmlspecialchars($_POST['commentaire']);
 
-        // Insertion du commentaire en base de données
+            // Insertion du commentaire en base de données
 
-        $insertCom = $db->prepare('INSERT INTO commentaires(commentaire, id_article, id_utilisateur, date) VALUES(:commentaire, :id_article, :id_utilisateur, NOW())');
-        $insertCom->execute(array(
-            'commentaire' => $commentaire,
-            'id_article' => $getid,
-            'id_utilisateur' => $_SESSION['id']
-        ));
-
+            $insertCom = $db->prepare('INSERT INTO commentaires(commentaire, id_article, id_utilisateur, date) VALUES(:commentaire, :id_article, :id_utilisateur, NOW())');
+            $insertCom->execute(array(
+                'commentaire' => $commentaire,
+                'id_article' => $getid,
+                'id_utilisateur' => $_SESSION['id']
+            ));
+            header("Refresh:0");
+        }
 
     } else {
-        echo "Veuillez entrer un commentaire";
+
+        // si utilisateur non connecté on laisse un message d'erreur
+        $msg['commentaire'] = '<a href="connexion.php">Connectez-vous ici pour laisser un commentaire.</a>';
     }
 }
+
 
 
 ?>
@@ -61,58 +70,73 @@ if(isset($_POST) && !empty($_POST)) {
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Article</title>
-<link rel="stylesheet" href="../../public/css/style.css">
-<link rel="icon" href="favicon.ico" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
+    <title>Innovatech - </title>
+    <link rel="stylesheet" href="../../public/css/styles.css">
 </head>
 <body>
+    
+    <!-- HEADER -->
 
-    <!--Import du header -->
-
-    <header>
-
+    <header class="header">
+ 
     <?php include ('../common/header.php'); ?>
 
     </header>
 
-    <main>
+    <!-- MAIN -->
+
+    <main class="main">
+    
+    <div class="marge"></div>
         
-        <section>
+        <section class="page_article">
 
-        <?php foreach($article as $key) : ?>
+            <article class="article">
 
-            <article>
+                <?php foreach($article as $key) : ?>
 
-            <p><?= $key['nom'] ?></p>
+                    <p>Categorie - <?= $key['nom'] ?></p>
 
-            <h3><?= $key['titre'] ?></h3>
+                    <h3><?= $key['titre'] ?></h3>
 
-            <img src="../../public/images<?=$key['image'] ?>" alt="<?= $key['nom_image'] ?>">
+                    <img src="../../public/images/<?=$key['image'] ?>" alt="<?= $key['nom_image'] ?>">
 
-            <p><?= $key['article'] ?></p>
+                    <p><?= $key['article'] ?></p>
+
+                <?php endforeach; ?>
 
             </article>
-        <?php endforeach; ?>
 
-            <h2>Commentaires</h2>
+            <h2>Commentaires :</h2>
 
             <?php foreach($commentaire as $key) : ?>
 
-            <div>
-                <p><?= $key['commentaire'] ?></p>
-            </div>
+                <div class="commentaire">
+                    <p><?= $key['commentaire'] ?></p>
+                </div>
 
             <?php endforeach; ?>
+            
+            <?php if (isset($_SESSION['id'])) : ?>
 
-            <form action="" method="POST">
-                
-                <textarea name="commentaire" placeholder="Ecrivez votre commentaire..."></textarea>
+            <form class="form_commentaire" action="" method="POST">
+
+                <input class="input_commentaire" type="text" name="commentaire" placeholder="Ecrivez votre commentaire..."  required="required" />
+                <p><?= $msg['commentaire'] ?></p>
 
                 <input type="submit" value="Valider" name="formsend">
-
             </form>
+
+            <?php else : ?> 
+
+            <p>Vous devez être connecté pour poster un commentaire</p>
+
+            <?php endif ?>
+
         </section>
     </main>
 
