@@ -1,29 +1,41 @@
-<div class="footer">
-<nav>
-  
-    <ul>
-   
-        <?php if(isset($_SESSION['id'])) : ?>
-        
-        <li><a href="profil.php">Profil</a></li>
-        <li class="bar_footer">|</li>
-        <li><a href="deconnexion.php">Déconnexion</a></li>
-        <li class="bar_footer">|</li>
-    
-        <?php else : ?>
-        
-        <li><a href="inscription.php">Inscription</a></li>
-        <li class="bar_footer">|</li>
-        <li><a href="connexion.php">Connexion</a></li>
-        <li class="bar_footer">|</li>
+<?php if(isset($_SESSION['id'])) : ?>
 
-        <?php endif ?>
-    
-        <li><a href="#">Articles</a></li>
-        <li class="bar_footer">|</li>
-        <li><a href="#">Github</a></li>
-    
-    </ul>
-
-</nav>
+<div class="footer_container">
+    <nav>
+        <ul>
+            <li><a href="accueil.php">Accueil</a></li>
+            <li class="bar_footer">|</li>
+            <li><a href="articles.php">Articles</a></li>
+            <li class="bar_footer">|</li>
+            <li><a href="contact.php">Contact</a></li>
+            <li class="bar_footer">|</li>
+            <li><a href="profil.php">Profil</a></li>
+            <li class="bar_footer">|</li>
+            <li><a href="../../view/common/deconnexion.php">Déconnexion</a></li>
+            <li class="bar_footer">|</li>
+            <li><a href="https://www.github.com/">Github</a></li>
+        </ul>
+    </nav>
 </div>
+
+<?php else : ?>
+
+<div class="footer_container">
+    <nav>
+        <ul>
+            <li><a href="accueil.php">Accueil</a></li>
+            <li class="bar_footer">|</li>
+            <li><a href="articles.php">Articles</a></li>
+            <li class="bar_footer">|</li>
+            <li><a href="contact.php">Contact</a></li>
+            <li class="bar_footer">|</li>
+            <li><a href="inscription.php">Inscription</a></li>
+            <li class="bar_footer">|</li>
+            <li><a href="connexion.php">Connexion</a></li>
+            <li class="bar_footer">|</li>
+            <li><a href="https://www.github.com/">Github</a></li>
+        </ul>
+    </nav>
+</div>
+
+<?php endif ?>
