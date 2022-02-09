@@ -28,12 +28,6 @@ if (!isset($_SESSION['id'])) {
 
 // Récupération des données de tous les utilisateurs
 
-//$req = $db->prepare('SELECT * FROM utilisateurs INNER JOIN droits ON utilisateurs.id_droits = droits.id  ORDER BY utilisateurs.id ASC');
-//$req->execute(array());
-
-//$req = $db->prepare('SELECT * FROM droits INNER JOIN utilisateurs ON utilisateurs.id_droits = droits.id  ORDER BY utilisateurs.id ASC');
-//$req->execute(array());
-
 $req = $db->prepare('SELECT * FROM utilisateurs');
 $req->execute(array());
 
@@ -109,6 +103,7 @@ $req4->execute();
                     <tr>
                         <td><?php echo htmlspecialchars($data['login']); ?></td>
                         <td><?php echo htmlspecialchars($data['email']); ?></td>
+                        <td><?php echo htmlspecialchars($data['nom']); ?></td>
                         <td> <?php echo '<a href="user-delete.php?id='.$data['id'] . '">Supprimer</a>';?></td>
                     </tr>
                     
