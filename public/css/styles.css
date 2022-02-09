@@ -3,8 +3,11 @@
 
 @font-face {
     font-family: "Novar";
-    src: url("/fonts/Novar.ttf");
+    src: url("../fonts/Novar.ttf");
 }
+
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&display=swap');
 
@@ -453,7 +456,7 @@ header{
 }
 
 .btn_articles a{
-    margin-top: -25px;
+    margin-top: 4px;
     font-size: 25px;
     border: 3px solid white;
     border-radius: 10rem;

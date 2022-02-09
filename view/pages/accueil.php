@@ -122,7 +122,7 @@ $articles = $requete->fetchAll();
         
         <div class="icon github">
             <div class="tooltip">Github</div>
-            <a href="https://www.github.com/" target="_blank"><span><i class="fab fa-github"></i></span></a>
+            <a href="https://github.com/sebastien-bargier/blog" target="_blank"><span><i class="fab fa-github"></i></span></a>
         </div>
 
 
