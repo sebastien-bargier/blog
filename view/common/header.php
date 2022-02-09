@@ -1,37 +1,59 @@
-<?php
+<div class="container">
+  <nav class="nav">
+    <a href="../../index.php" class="logo">InnovaTech</a>
+    <ul class="nav-list">
+        <li>
+            <a href="../../index.php" class="nav-link">Accueil</a>
+        </li>
+        <li>
+            <a href="../../view/pages/articles.php" class="nav-link">Articles</a>
+        </li>
+        <li>
+            <a href="#" class="nav-link">Contact</a>
+        </li>
 
-$categorie = $db->prepare("SELECT * FROM categories");
-$categorie->execute(array());
+        <?php if(!isset($_SESSION['id'])) {
 
-?>
+        echo '<li>
+            <a href="#" id="nav_hide"class="nav-link">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </a>
+        </li>
 
-<nav>
-  
-  <a class="logo" href="accueil.php">eBLOG</a>
+        <li>
+            <a href="#" id="nav_hide" class="nav-link">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </a>
+        </li>';
 
-  <ul>
-    
-    <?php if(isset($_SESSION['id'])) : ?>
-      
-      <li><a href="profil.php">Profil</a></li>
-      <li><a href="../common/deconnexion.php">Déconnexion</a></li>
+        }
 
-    <?php else : ?>
+        ?>
         
-      <li><a href="inscription.php">Inscription</a></li>
-      <li><a href="connexion.php">Connexion</a></li>
+        <?php if(isset($_SESSION['id'])) : ?>
 
-    <?php endif; ?>
+        <?php if($_SESSION['id_droits'] == 42) : ?>
+          
+        <li>
+          <a href="../../view/pages/creer-article.php" class="nav-link">Créer un article</a>
+        </li> 
+        <?php endif; ?>
 
-    <li class="deroulant"><a href="articles.php">Articles</a>
-      <ul class="sous">
+        <?php if(($_SESSION['id_droits']) == 1337) : ?>
 
-        <?php while($cat = $categorie->fetch(PDO::FETCH_ASSOC)) :?>
-
-          <li><a href="../pages/articles.php?categorie=<?= $cat['id'] ?>"><?= $cat['nom'] ?></a></li>
-        <?php endwhile; ?>
+        <li>
+        <a href="../../view/pages/admin.php" class="nav-link">Administration</a>
+        </li>
+        
+        <?php endif; ?>
 
       </ul>
-    </li>
-  </ul>
-</nav>
+
+      <a href="../../view/pages/profil.php" id="nav-cta">Profil</a>
+      <a href="../../view/common/deconnexion.php" id="nav-cta">Déconnexion</a>
+
+      <?php else : ?>
+
+      <a href="../../view/pages/inscription.php" id="nav-cta">Inscription</a>
+      <a href="../../view/pages/connexion.php" id="nav-cta">Connexion</a>
+
+      <?php endif; ?>
+
+  </nav>
+</div>

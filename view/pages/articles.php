@@ -1,8 +1,8 @@
 <?php
 
-// ------------------------------------------
+// --------------------------------------------------
 // TRAITEMENT AFFICHAGES DES ARTICLES <<<<<<<<<<<<<<<
-// ------------------------------------------
+// --------------------------------------------------
 
 session_start();
 
@@ -59,67 +59,85 @@ $filtreCategorie->execute(array());
 
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../public/css/style.css">
-    <title>Les articles</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
+    <title>Innovatech - Articles</title>
+    <link rel="stylesheet" href="../../public/css/styles.css">
 </head>
 <body>
+    
+    <!-- IMPORT DU HEADER -->
 
-<header>
-    <?php include '../common/header.php'; ?>
-</header>
+    <header class="header">
+    
+    <?php include ('../common/header.php'); ?>
 
-    <main>
+    </header>
 
-        <!-- Categories -->
-        <section class="categories">
+    <!-- MAIN -->
 
-                <a href="../pages/articles.php"><p>Toutes les catégories</p>
+    <main class="main">
+    
+        <div class="marge"></div>
 
-                <?php
-                
-                while($categorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) : ?>
+        <section id="categories">
 
-                    <a href="../pages/articles.php?categorie=<?= $categorie['id'] ?>"><p><?= $categorie['nom'] ?></p></a>
-                                                
-                <?php endwhile; ?>
+            <!-- PARTIE CATEGORIES -->
 
-        </section>
-
-        <!-- Articles -->
-        <section class="les_articles">
-
-        <?php foreach($articles as $article) : ?>
-
-            <article>
-
-                <a href="../pages/article.php?id=<?= $article['id'] ?>">
-
-                    <p>Categorie - <?= $article['nom'] ?></p>
-
-                    <h3><?= $article['titre'] ?></h3>
-
-                    <img src="../../public/images/<?=$article['image'] ?>" alt="<?= $article['nom_image'] ?>">
-
-                    <p><?= $article['article'] ?></p>
-
-                    <p>Date de publication : <?= date("d-m-Y à H:i", strtotime($article['date'])) ?></p>
-
-                </a>
-            </article>
-        <?php endforeach; ?>
-
-        </section>
-
-        <!-- Pagination -->
-        <section class="pagination">
+            <a href="../pages/articles.php"><p>Toutes les catégories</p></a>
 
             <?php
+
+            while($categorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) : ?>
+
+            <a href="../pages/articles.php?categorie=<?= $categorie['id'] ?>"><p><?= $categorie['nom'] ?></p></a>
+                                        
+            <?php endwhile; ?>
+
+        </section>
+        
+        <!-- PARTIE ARTICLES -->
+
+            <!-- ARTICLES -->
+
+            <div class="wrapper_article">
+
+            <?php foreach($articles as $article) : ?>
+
+                <div class="card">
+
+                    <div class="card-header">
+                    
+                        <img src="../../public/images/<?=$article['image'] ?>" >
+
+                    </div>
+
+                    <div class="card-body">
+                        <span class="tag"><?= $article['nom'] ?></span>
+                        <h1><?= $article['titre'] ?></h1>
+                        <p><?= $article['article'] ?></p>
+                        <a href="../pages/article.php?id=<?= $article['id'] ?>" class="btn">Lire la suite</a>
+
+                    </div>
+
+                </div>
+                
+                <?php endforeach; ?>
+
+            </div>
+
+        </section>
+
+        <div class="pagination">
+        
+        <!-- PARTIE PAGINATION -->
+
+        <?php
 
             if ($currentPage != 1) {
 
@@ -150,12 +168,17 @@ $filtreCategorie->execute(array());
             }
 
             ?>
-        </section>
+
+        </div>
 
     </main>
-    
+
+    <!-- IMPORT DU FOOTER -->
+
     <footer>
-        <?php require '../common/footer.php'; ?>
+
+    <?php include ('../common/footer.php'); ?>
+
     </footer>
 
 </body>
