@@ -28,7 +28,7 @@ if (!isset($_SESSION['id'])) {
 
 // Récupération des données de tous les utilisateurs
 
-$req = $db->prepare('SELECT * FROM utilisateurs');
+$req = $db->prepare('SELECT * FROM droits INNER JOIN utilisateurs ON utilisateurs.id_droits = droits.id  ORDER BY utilisateurs.id ASC');
 $req->execute(array());
 
 $req2 = $db->prepare("SELECT * FROM categories INNER JOIN articles ON articles.id_categorie = categories.id");
