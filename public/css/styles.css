@@ -3,11 +3,8 @@
 
 @font-face {
     font-family: "Novar";
-    src: url("../fonts/Novar.ttf");
+    src: url("/fonts/Novar.ttf");
 }
-
-
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&display=swap');
 
@@ -33,12 +30,12 @@ body {
 a { color:black; }
 
 .main { 
-    min-height: 90vh;
+    min-height: 110vh;
     background: linear-gradient(120deg,#2980b9, #8e44ad);
 }
 
 .main2 {
-    min-height: 90vh;
+    min-height: 110vh;
     background: linear-gradient(135deg, #0a4871 0%, #44a8d0 100%);
     
 
@@ -602,6 +599,7 @@ header{
     background: white;
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+    margin-top: 40px;
   }
   
 .center h1{
