@@ -81,7 +81,7 @@ if(isset($_POST) && !empty($_POST)) {
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
-    <title>Innovatech - </title>
+    <title>Innovatech - Article</title>
     <link rel="stylesheet" href="../../public/css/styles.css">
 </head>
 <body>
