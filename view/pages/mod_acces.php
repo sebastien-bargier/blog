@@ -103,8 +103,6 @@ $row = $usr->rowCount();
 
         if(isset($_POST['login'])) {
 
-            if ($row == 1) {
-
             $update = $db->prepare("UPDATE utilisateurs SET id_droits = :id_droits WHERE login = :login");
             $update->execute(array(':id_droits' => $_POST['droit_acces'], ':login' => $_POST['login']));
 
@@ -112,14 +110,6 @@ $row = $usr->rowCount();
 
         }
         
-        else {
-
-            echo "<p class=error2_php>Nom d'utilisateur inexistant.<p><br><br>";
-
-        }
-    }
-
-
         ?>
 
 </div>
