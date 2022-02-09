@@ -245,7 +245,7 @@ header{
     background-size: cover;
     position: relative;
     background-size: 250% 400%;
-    /* animation: change 10s ease infinite;   */
+    animation: change 10s ease infinite;  
 }
 
 @keyframes change {
@@ -453,7 +453,7 @@ header{
 }
 
 .btn_articles a{
-    margin-top: -15px;
+    margin-top: -25px;
     font-size: 25px;
     border: 3px solid white;
     border-radius: 10rem;
@@ -789,6 +789,18 @@ select {
     }
 
 /* TEXTAREA CSS*/
+
+input [type=textarea] {
+    margin-top: 14px;
+    resize: none;
+    width: 320px;
+    height: 170px;
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    color: #adadad;
+    padding: 2rem;
+}   
 
 textarea {
     margin-top: 14px;

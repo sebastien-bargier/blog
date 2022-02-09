@@ -41,6 +41,9 @@ $rights = $req->fetchAll(PDO::FETCH_ASSOC);
 $usr = $db->prepare('SELECT * FROM utilisateurs');
 $usr->execute(array());
 $data = $usr->fetch(PDO::FETCH_ASSOC);
+$row = $usr->rowCount();
+
+
 
 ?>
 
@@ -100,10 +103,22 @@ $data = $usr->fetch(PDO::FETCH_ASSOC);
 
         if(isset($_POST['login'])) {
 
+            if ($row == 1) {
+
             $update = $db->prepare("UPDATE utilisateurs SET id_droits = :id_droits WHERE login = :login");
             $update->execute(array(':id_droits' => $_POST['droit_acces'], ':login' => $_POST['login']));
 
+            echo "<p class=success_php>Droit d'accès modifié avec succès.<p><br><br>";
+
         }
+        
+        else {
+
+            echo "<p class=error2_php>Nom d'utilisateur inexistant.<p><br><br>";
+
+        }
+    }
+
 
         ?>
 
