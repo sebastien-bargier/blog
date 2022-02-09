@@ -36,6 +36,13 @@ $req = $db->prepare("SELECT * FROM categories");
 $req->execute();
 $categories = $req->fetchAll(PDO::FETCH_ASSOC);
 
+// Récupération des données de l'article
+
+$check = $db->prepare('SELECT * FROM articles WHERE id= ?');
+$check->execute(array($_GET['id']));
+$data = $check->fetch();
+
+
 ?>
 
 <!--Création du formulaire de création d'article-->
@@ -47,7 +54,7 @@ $categories = $req->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
-    <title>Innovatech - Créer un article</title>
+    <title>Innovatech - Modifier un article</title>
     <link rel="stylesheet" href="../../public/css/styles.css">
 </head>
 <body>
@@ -66,12 +73,12 @@ $categories = $req->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="center">
 
-        <h1>Création d'article</h1>
+        <h1>Modification d'article</h1>
 
         <form action="" method="POST" enctype="multipart/form-data">
 
             <div class="txt_field">
-                <input name="titreArticle" required="required" autocomplete="off">
+                <input name="titreArticle" value="<?= $data['titre'] ?>" required="required" autocomplete="off">
                 <span></span>
                 <label>Titre de l'article</label>
             </div>
@@ -81,7 +88,8 @@ $categories = $req->fetchAll(PDO::FETCH_ASSOC);
 
                     <?php foreach($categories as $categorie) :?>
 
-                        <option value="<?= $categorie['id'] ?>"><?= $categorie['nom'] ?></option>
+                        <option selected value="<?= $categorie['id'] ?>"><?= $categorie['nom'] ?></option>
+                        
 
                     <?php endforeach; ?>
 
@@ -89,11 +97,11 @@ $categories = $req->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="textarea">
-                <textarea name="contenuArticle" placeholder="Contenu de article" required="required" autocomplete="off"></textarea>
+                <textarea name="contenuArticle" placeholder="Contenu de article" required="required" autocomplete="off"><?= $data['article']?></textarea>
             </div>
 
             <div class="file">
-                <input type="file" name="imageArticle">
+                <input type="file" value="<?= $data['image'] ?>" name="imageArticle">
             </div>
 
             <div>
@@ -134,19 +142,23 @@ if(isset($_POST["formsend"])) {
                     // On peut valider le fichier et le stocker définitivement dans le dossier 'public/images'
 
                     move_uploaded_file($_FILES['imageArticle']['tmp_name'], '../../public/images/' .basename($imageArticle));
-                    echo '<div class= "success_php">' . "Votre article a été publié avec succès." . '</div>';
+                    echo '<div class= "success_php">' . "Votre article a été modifié avec succès." . '</div>';
 
                     // Insertion des données dans la table
 
-                    $insertArticle = $db->prepare("INSERT INTO articles (titre, article, image, nom_image, id_utilisateur, id_categorie, date) VALUES(:titre, :article, :image, :nom_image, :id_utilisateur, :id_categorie, NOW())");
-                    $insertArticle->execute(array(
-                        'titre' => $titreArticle,
-                        'article' => $article,
-                        'image' => $imageArticle,
-                        'nom_image' => $nomImage,
-                        'id_utilisateur' => $_SESSION['id'],
-                        'id_categorie' => $categorieArticle
-                    ));
+                    // $insertArticle = $db->prepare("INSERT INTO articles (titre, article, image, nom_image, id_utilisateur, id_categorie, date) VALUES(:titre, :article, :image, :nom_image, :id_utilisateur, :id_categorie, NOW())");
+                    // $insertArticle->execute(array(
+                    //     'titre' => $titreArticle,
+                    //     'article' => $article,
+                    //     'image' => $imageArticle,
+                    //     'nom_image' => $nomImage,
+                    //     'id_utilisateur' => $_SESSION['id'],
+                    //     'id_categorie' => $categorieArticle
+                    // ));
+
+                    $update = $db->prepare("UPDATE articles SET titre=:titre,article=:article,image=:image,nom_image=:nom_image,id_utilisateur=:id_utilisateur,id_categorie=:id_categorie WHERE id = :id");
+                    // $update = $db->prepare("UPDATE articles SET titre = :titre, article = :article, image = :image, nom_image = :nom_image, id_utilisateur = :id_utilisateur, id_categorie = :id_categorie WHERE id = :id");
+                    $update->execute(array( 'titre' => $titreArticle, 'article' => $article, 'image' => $imageArticle, 'nom_image' => $nomImage, 'id_utilisateur' => $_SESSION['id'], 'id_categorie' => $categorieArticle, 'id' => $_GET['id']));
                     
                 } else {
 
