@@ -36,7 +36,7 @@ if ($_SESSION['id_droits'] == 1 OR $_SESSION['id_droits'] == 42) {
 
 // Récupération des données de tous les utilisateurs
 
-$req = $db->prepare('SELECT * FROM droits INNER JOIN utilisateurs ON utilisateurs.id_droits = droits.id  ORDER BY utilisateurs.id ASC');
+$req = $db->prepare('SELECT * FROM utilisateurs INNER JOIN droits ON utilisateurs.id_droits = droits.id  ORDER BY utilisateurs.id ASC');
 $req->execute(array());
 
 $req2 = $db->prepare("SELECT * FROM categories INNER JOIN articles ON articles.id_categorie = categories.id");
@@ -45,10 +45,8 @@ $req2->execute();
 $req3 = $db->prepare("SELECT * FROM categories");
 $req3->execute();
 
-$req4 = $db->prepare("SELECT * FROM articles INNER JOIN commentaires ON articles.id = commentaires.id_article INNER JOIN utilisateurs ON commentaires.id_utilisateur = utilisateurs.id ORDER BY articles.titre ASC");
-$req4->execute();
-
-
+$req4 = $db->prepare("SELECT commentaires.id, commentaires.commentaire, commentaires.date, articles.titre, utilisateurs.login FROM commentaires INNER JOIN articles ON commentaires.id_article = articles.id INNER JOIN utilisateurs ON commentaires.id_utilisateur = utilisateurs.id ORDER BY articles.titre ASC");
+$ok = $req4->execute();
 
 
 ?>
