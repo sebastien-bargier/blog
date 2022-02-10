@@ -46,7 +46,7 @@ $req3 = $db->prepare("SELECT * FROM categories");
 $req3->execute();
 
 $req4 = $db->prepare("SELECT commentaires.id, commentaires.commentaire, commentaires.date, articles.titre, utilisateurs.login FROM commentaires INNER JOIN articles ON commentaires.id_article = articles.id INNER JOIN utilisateurs ON commentaires.id_utilisateur = utilisateurs.id ORDER BY articles.titre ASC");
-$ok = $req4->execute();
+$req4->execute();
 
 
 ?>
