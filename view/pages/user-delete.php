@@ -8,6 +8,6 @@ $id = $_GET['id'];
 
 $req = $db->query("DELETE FROM `utilisateurs` WHERE id = $id");
 
-// header('location: admin.php');
+header('location: admin.php');
 
 ?>
