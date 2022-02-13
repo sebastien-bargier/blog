@@ -36,11 +36,11 @@ $filtreCategorie->execute(array());
 
         <?php if(!isset($_SESSION['id'])) {
 
-        echo // <li>
-        //     <a href="#" id="nav_hide"class="nav-link_accueil">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </a>
-        // </li>
+        echo '<li>
+            <a href="#" id="nav_hide"class="nav-link_accueil">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </a>
+        </li>
 
-        '<li>
+        <li>
             <a href="#" id="nav_hide" class="nav-link_accueil">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </a>
         </li>';
 
