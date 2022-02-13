@@ -52,7 +52,7 @@ $pages = ceil($nbArticles / $parPage);
 $premier = ($currentPage * $parPage) - $parPage;
 
 // On récupère les données de tous les articles
-$requete = $db->prepare('SELECT * FROM categories INNER JOIN articles ON articles.id_categorie = categories.id '.$categorie.' ORDER BY date DESC LIMIT '.$premier.', '.$parPage.'');
+$requete = $db->prepare('SELECT * FROM utilisateurs INNER JOIN articles ON articles.id_utilisateur = utilisateurs.id INNER JOIN categories ON articles.id_categorie = categories.id '.$categorie.' ORDER BY date DESC LIMIT '.$premier.', '.$parPage.'');
 $requete->execute();
 $articles = $requete->fetchAll();
 
@@ -123,7 +123,7 @@ $filtreCategorie2->execute(array());
                     <div class="card-body">
                         <span class="tag"><?= $article['nom'] ?></span>
                         <h1><?= $article['titre'] ?></h1>
-                        <p>Posté par <?= $data['login'] ?> le <?= $data['date'] ?></p>
+                        <p>Posté par <?= $article['login'] ?> le <?= $article['date'] ?></p>
                         <p><?= $article['article'] ?></p>
                         <a href="../pages/article.php?id=<?= $article['id'] ?>" class="btn">Lire la suite</a>
 

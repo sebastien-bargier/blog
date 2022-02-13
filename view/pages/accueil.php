@@ -9,13 +9,9 @@ session_start();
 require '../common/config.php';
 
 // Récupération des données de tous les articles
-$requete = $db->prepare('SELECT * FROM categories INNER JOIN articles ON articles.id_categorie = categories.id ORDER BY date DESC LIMIT 3;');
+$requete = $db->prepare('SELECT * FROM categories INNER JOIN articles ON articles.id_categorie = categories.id INNER JOIN utilisateurs ON articles.id_utilisateur = utilisateurs.id ORDER BY date DESC LIMIT 3;');
 $requete->execute();
 $articles = $requete->fetchAll();
-
-$check = $db->prepare('SELECT * FROM articles a INNER JOIN utilisateurs u ON a.id_utilisateur = u.id');
-$check->execute(array());
-$data = $check->fetch();
 
 ?>
 
@@ -85,7 +81,7 @@ $data = $check->fetch();
                     <div class="card-body">
                         <span class="tag"><?= $article['nom'] ?></span>
                         <h1><?= $article['titre'] ?></h1>
-                        <p>Posté par <?= $data['login'] ?> le <?= $data['date'] ?></p>
+                        <p>Posté par <?= $article['login'] ?> le <?= $article['date'] ?></p>
                         <p><?= $article['article'] ?></p>
                         <a href="../pages/article.php?id=<?= $article['id'] ?>" class="btn">Lire la suite</a>
 
