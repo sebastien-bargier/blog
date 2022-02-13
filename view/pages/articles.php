@@ -27,6 +27,9 @@ else {
     $categorie = '';
 }
 
+$check = $db->prepare('SELECT * FROM articles a INNER JOIN utilisateurs u ON a.id_utilisateur = u.id');
+$check->execute(array());
+$data = $check->fetch();
 
 // On détermine le nombre total d'articles
 $requete = $db->prepare('SELECT  COUNT(*) AS nb_articles FROM `articles` '.$categorie.'');
@@ -120,6 +123,7 @@ $filtreCategorie2->execute(array());
                     <div class="card-body">
                         <span class="tag"><?= $article['nom'] ?></span>
                         <h1><?= $article['titre'] ?></h1>
+                        <p>Posté par <?= $data['login'] ?> le <?= $data['date'] ?></p>
                         <p><?= $article['article'] ?></p>
                         <a href="../pages/article.php?id=<?= $article['id'] ?>" class="btn">Lire la suite</a>
 
