@@ -36,7 +36,7 @@ $article = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 // Récupère les commentaires utilisateur lié a l'article
 
-$requete = $db->prepare("SELECT * FROM commentaires c INNER JOIN utilisateurs u ON c.id_utilisateur = u.id WHERE id_article = :getid");
+$requete = $db->prepare("SELECT * FROM commentaires c INNER JOIN utilisateurs u ON c.id_utilisateur = u.id WHERE id_article = :getid ORDER BY c.commentaire ASC");
 $requete->execute(array('getid' => $getid));
 $commentaire = $requete->fetchAll(PDO::FETCH_ASSOC);
 
