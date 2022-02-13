@@ -52,7 +52,7 @@ $pages = ceil($nbArticles / $parPage);
 $premier = ($currentPage * $parPage) - $parPage;
 
 // On récupère les données de tous les articles
-$requete = $db->prepare('SELECT * FROM utilisateurs INNER JOIN articles ON articles.id_utilisateur = utilisateurs.id INNER JOIN categories ON articles.id_categorie = categories.id '.$categorie.' ORDER BY date DESC LIMIT '.$premier.', '.$parPage.'');
+$requete = $db->prepare('SELECT login, date, image, articles.titre, categories.nom, articles.article, articles.id FROM utilisateurs INNER JOIN articles ON articles.id_utilisateur = utilisateurs.id INNER JOIN categories ON articles.id_categorie = categories.id '.$categorie.' ORDER BY date DESC LIMIT '.$premier.', '.$parPage.'');
 $requete->execute();
 $articles = $requete->fetchAll();
 
