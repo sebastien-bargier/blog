@@ -9,9 +9,16 @@ session_start();
 require '../common/config.php';
 
 // Récupération des données de tous les articles
-$requete = $db->prepare('SELECT * FROM categories INNER JOIN articles ON articles.id_categorie = categories.id INNER JOIN utilisateurs ON articles.id_utilisateur = utilisateurs.id ORDER BY date DESC LIMIT 3;');
+// $requete = $db->prepare('SELECT * FROM categories INNER JOIN articles ON articles.id_categorie = categories.id ORDER BY date ASC LIMIT 3;');
+// $requete->execute();
+// $articles = $requete->fetchAll();
+
+$requete = $db->prepare('SELECT login, date, image, articles.titre, categories.nom, articles.article, articles.id FROM utilisateurs INNER JOIN articles ON articles.id_utilisateur = utilisateurs.id INNER JOIN categories ON categories.id = articles.id_categorie ORDER BY date DESC LIMIT 3');
 $requete->execute();
 $articles = $requete->fetchAll();
+
+
+// 
 
 ?>
 
