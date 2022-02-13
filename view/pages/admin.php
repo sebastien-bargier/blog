@@ -174,7 +174,7 @@ $req4->execute();
                     <td><?php echo htmlspecialchars($data['article']); ?></td>
                     <td><?php echo htmlspecialchars($data['nom']); ?></td>
                     <td><?php echo htmlspecialchars($data['date']); ?></td>
-                    <td><a href="updatea-rticle.php?id=<?= $data['id'] ?>">Modifier</a></td>
+                    <td><a href="update-article.php?id=<?= $data['id'] ?>">Modifier</a></td>
                     <td> <?php echo '<a href="delete-article.php?id='.$data['id'] . '">Supprimer</a>';?></td>
                     </tr>
                     
