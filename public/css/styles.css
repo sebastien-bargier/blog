@@ -3,8 +3,11 @@
 
 @font-face {
     font-family: "Novar";
-    src: url("/fonts/Novar.ttf");
+    src: url("../fonts/Novar.ttf");
 }
+
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&display=swap');
 
@@ -69,7 +72,7 @@ header{
 
 .nav_accueil{
     width: 100%;
-    height: 13rem;
+    height: 9rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -132,7 +135,68 @@ header{
     background-color: #d3d3d3;
 }
 
+/* MENU DEROULANT CSS */
+
+.sous{
+    display: none;
+    position: absolute;
+    border: none;
+    border-radius: 6px;
+    z-index: 1000;
+    transition: all 0.1s ease;
+    animation: rotateMenu 400ms ease-in-out forwards;
+    transform-origin: top center;
+}
+
+@keyframes rotateMenu {
+    0% {
+        transform: rotateX(-90deg)
+    }
+    70% {
+        transform: rotateX(20deg) 
+    }
+    100% {
+        transform: rotateX(0deg) 
+    }
+}
+
+nav > ul li:hover .sous{
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.deroulant {
+    margin-top: -10px;
+}
+
+header span{
+    font-size: 14px;
+    color:white;
+    margin-left: -10px;
+    margin-right: 10px;
+}
+
+.sous a{
+    transition: 0.3s ease;
+}
+
+.sous a:hover {
+    color:#2691d9;
+}
+
+.sous a:hover {
+    color:#2691d9;
+}
+
 /* SCROLL HEADER CSS ACCUEIL */
+
+.scrolling-active .sous{
+    background-color: #fff;
+}
+
+.scrolling-active .sous a:hover {
+    color:#2691d9;
+}
 
 .scrolling-active{
     background-color: #fff;
@@ -385,6 +449,7 @@ header{
 /* CARD ARTICLES CSS */
 
 .card {
+    top: 100px;
     margin: 30px;
     background-color: #fff;
     border-radius: 10px;

@@ -54,8 +54,8 @@ $requete->execute();
 $articles = $requete->fetchAll();
 
 // REQUETE CHOIX CATEGORIE 
-$filtreCategorie = $db->prepare("SELECT * FROM categories");
-$filtreCategorie->execute(array());
+$filtreCategorie2 = $db->prepare("SELECT * FROM categories");
+$filtreCategorie2->execute(array());
 
 ?>
 
@@ -93,7 +93,7 @@ $filtreCategorie->execute(array());
 
             <?php
 
-            while($categorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) : ?>
+            while($categorie = $filtreCategorie2->fetch(PDO::FETCH_ASSOC)) : ?>
 
             <a href="../pages/articles.php?categorie=<?= $categorie['id'] ?>"><p><?= $categorie['nom'] ?></p></a>
                                         

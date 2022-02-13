@@ -1,3 +1,9 @@
+<?php
+// REQUETE CHOIX CATEGORIE 
+$filtreCategorie = $db->prepare("SELECT * FROM categories");
+$filtreCategorie->execute(array());
+?>
+
 <div class="container">
   <nav class="nav_accueil">
     <a href="../../index.php" class="logo">InnovaTech</a>
@@ -5,20 +11,36 @@
         <li>
             <a href="../../index.php" class="nav-link_accueil">Accueil</a>
         </li>
-        <li>
-            <a href="../../view/pages/articles.php" class="nav-link_accueil">Articles</a>
-        </li>
+        
         <li>
             <a href="#" class="nav-link_accueil">Contact</a>
         </li>
 
-        <?php if(!isset($_SESSION['id'])) {
+        <li><a href="../../view/pages/articles.php" class="deroulant">Articles</a>
+        <ul class="sous">
+          <li>&nbsp;</li>
+          <li>&nbsp;</li>
+          <li>&nbsp;</li>
+          <li>&nbsp;</li>
 
-        echo '<li>
-            <a href="#" id="nav_hide"class="nav-link_accueil">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </a>
+          <?php
+
+          while($categorie = $filtreCategorie->fetch(PDO::FETCH_ASSOC)) : ?>
+
+          <li><a style="font-size: 19px;" href="../pages/articles.php?categorie=<?= $categorie['id'] ?>"><?= $categorie['nom'] ?></a></li><br>
+                                        
+          <?php endwhile; ?>
+
+        </ul>
         </li>
 
-        <li>
+        <?php if(!isset($_SESSION['id'])) {
+
+        echo // <li>
+        //     <a href="#" id="nav_hide"class="nav-link_accueil">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </a>
+        // </li>
+
+        '<li>
             <a href="#" id="nav_hide" class="nav-link_accueil">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </a>
         </li>';
 

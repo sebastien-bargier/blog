@@ -19,13 +19,9 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
 
 }
 
-if (isset($_SESSION['id'])) {
-
-$check = $db->prepare('SELECT * FROM utilisateurs WHERE id= ?');
-$check->execute(array($_SESSION['id']));
+$check = $db->prepare('SELECT * FROM articles a INNER JOIN utilisateurs u ON a.id_utilisateur = u.id WHERE a.id = :getid');
+$check->execute(array('getid' => $getid));
 $data = $check->fetch();
-
-}
 
 // Récupère l'article selon son id passé dans l'url
 
@@ -36,7 +32,7 @@ $article = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 // Récupère les commentaires utilisateur lié a l'article
 
-$requete = $db->prepare("SELECT * FROM commentaires c INNER JOIN utilisateurs u ON c.id_utilisateur = u.id WHERE id_article = :getid ORDER BY c.commentaire ASC");
+$requete = $db->prepare("SELECT * FROM commentaires c INNER JOIN utilisateurs u ON c.id_utilisateur = u.id WHERE id_article = :getid");
 $requete->execute(array('getid' => $getid));
 $commentaire = $requete->fetchAll(PDO::FETCH_ASSOC);
 
@@ -112,6 +108,8 @@ if(isset($_POST) && !empty($_POST)) {
 
                     <h2><?= $key['titre'] ?></h2>
 
+                    <p>Posté par <?= $data['login'] ?> le <?= $key['date'] ?></p>
+
                     <p><?= $key['article'] ?></p>
 
                 <?php endforeach; ?>
@@ -121,7 +119,6 @@ if(isset($_POST) && !empty($_POST)) {
             <hr><br><br>
 
             <h3>Commentaires</h3>
-
 
             <?php foreach($commentaire as $key) : ?>
 

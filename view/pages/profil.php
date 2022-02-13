@@ -80,22 +80,16 @@ $row = $check->rowCount();
                     </div>
                 
                     <div class="txt_field">
-                        <input type="password" name="current_password" required autocomplete="off">
-                        <span></span>
-                        <label>Mot de passe</label>
+                        <input type="password" name="current_password" placeholder= "Mot de passe" required autocomplete="off">
                     </div>
 
 
                     <div class="txt_field">
-                        <input type="password" name="password" autocomplete="off">
-                        <span></span>
-                        <label>Nouveau mot de passe</label>
+                        <input type="password" name="password"  placeholder= "Nouveau mot de passe" autocomplete="off">
                     </div>
 
                     <div class="txt_field">
-                        <input type="password" name="cpassword" autocomplete="off">
-                        <span></span>
-                        <label>Confirmation du mot de passe</label>
+                        <input type="password" name="cpassword" placeholder= "Confirmation du mot de passe" autocomplete="off">
                     </div>
                 
                     <input type="submit" name="formsend" value="Sauvegarder">

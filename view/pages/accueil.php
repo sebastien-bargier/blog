@@ -13,8 +13,11 @@ $requete = $db->prepare('SELECT * FROM categories INNER JOIN articles ON article
 $requete->execute();
 $articles = $requete->fetchAll();
 
-?>
+$check = $db->prepare('SELECT * FROM articles a INNER JOIN utilisateurs u ON a.id_utilisateur = u.id');
+$check->execute(array());
+$data = $check->fetch();
 
+?>
 
 <!doctype html>
 <html lang="fr">
@@ -82,6 +85,7 @@ $articles = $requete->fetchAll();
                     <div class="card-body">
                         <span class="tag"><?= $article['nom'] ?></span>
                         <h1><?= $article['titre'] ?></h1>
+                        <p>Posté par <?= $data['login'] ?> le <?= $data['date'] ?></p>
                         <p><?= $article['article'] ?></p>
                         <a href="../pages/article.php?id=<?= $article['id'] ?>" class="btn">Lire la suite</a>
 
