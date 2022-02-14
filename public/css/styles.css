@@ -398,7 +398,7 @@ header span{
 
 .content{
     width: 100%;
-    min-height: 95vh;
+    min-height: 105vh;
     background-color: #fff;
 }
 
@@ -421,15 +421,14 @@ header span{
     font-size: 3rem;
     color: white;
     font-weight: 600;
-    margin: 5px;
     margin-top: 30px;
 }
 
 
 .container_article img {
     margin-top: 20px;
-    max-width:50px;
-    max-height:50px;
+    max-width:45px;
+    max-height:45px;
     width: auto;
     height: auto;
 }
@@ -458,7 +457,6 @@ header span{
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px; 
     font-family: 'Montserrat', sans-serif;
     border: 2px solid white;
-    transition: 0.9s ease;
 
 }
 
@@ -509,6 +507,11 @@ header span{
     margin-top: 10px;
     font-size: 15px;
     color: blue;
+	transition: 0.45s ease-in-out;
+}
+
+.card-body a:hover {
+	letter-spacing: 1px;
 }
 
 .btn_articles {
@@ -518,7 +521,7 @@ header span{
 }
 
 .btn_articles a{
-    margin-top: 4px;
+    margin-top: 12px;
     font-size: 25px;
     border: 3px solid white;
     border-radius: 10rem;
