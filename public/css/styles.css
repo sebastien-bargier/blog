@@ -428,8 +428,8 @@ header span{
 
 .container_article img {
     margin-top: 20px;
-    max-width:75px;
-    max-height:75px;
+    max-width:50px;
+    max-height:50px;
     width: auto;
     height: auto;
 }
